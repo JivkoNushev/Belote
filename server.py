@@ -16,6 +16,7 @@ s.listen(4)
 print("Waiting for connection")
 
 def threaded_client(conn):
+    conn.send(str.encode("Connected"))
     reply = ""
     while True:
         try:
