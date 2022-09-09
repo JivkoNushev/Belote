@@ -16,13 +16,20 @@ s.listen(4)
 print("Waiting for connection")
 
 def read_pos(str):
+    print(str)
     str = str.split(",")
     return int(str[0]), int(str[1])
 
 def make_pos(tup):
-    return str(tup[0]) + "," + str(tup[1])
+    res = ""
+    for item in tup:
+        print(item)
+        res += str(item[0]) + ","
+        res += str(item[1]) + ","
+    print(res[0:-1])
+    return res[0:-1]
 
-pos = [(0, 0), (100, 100)]
+pos = [(0, 0), (100, 100), (200, 200), (300, 300)]
 
 def threaded_client(conn, player):
     conn.send(str.encode(make_pos(pos[player])))
@@ -31,17 +38,21 @@ def threaded_client(conn, player):
         try:
             data = read_pos(conn.recv(2048).decode("utf-8"))
             pos[player] = data
-
-            reply
-
+            
             if not data:
                 print("Disconnected")
                 break
             else:
-                if player == 1:
-                    reply = pos[0]
+                #print(player)
+                if player == 0:
+                    reply = (pos[1], pos[2], pos[3])
+                elif player == 1:
+                    reply = (pos[0], pos[2], pos[3])
+                elif player == 2:
+                    reply = (pos[0], pos[1], pos[3])
                 else:
-                    reply = pos[1]
+                    reply = (pos[0], pos[1], pos[2])
+               
                 print("Received: ", data)
                 print("Sending: ", reply)
 
