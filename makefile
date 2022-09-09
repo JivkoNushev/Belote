@@ -1,7 +1,7 @@
 FILES = client.py network.py server.py
 
 all:
-	python client.py
+	python &client.py
 
 server:
 	CMD /C start python server.py
