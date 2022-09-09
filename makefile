@@ -1,20 +1,16 @@
 FILES = client.py network.py server.py
-CFLAGS = -Wall -pedantic
 
-all: ${FILES}
-	python client.py network.py 
+all:
+	python client.py
 
 server:
-	start python server.py 
-
-clean:
-	rm *.o *.out
+	CMD /C start python server.py
 
 open:
-	code client.py network.py server.py
+	code ${FILES}
 
 OPEN:
-	gedit client.py network.py server.py
+	gedit ${FILES}
 
 run:
 	python client.py network.py server.py
