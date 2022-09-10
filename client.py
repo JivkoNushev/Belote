@@ -52,7 +52,6 @@ class Player():
         po = pygame.mouse.get_pressed()
         if po[0]:
             mPos = pygame.mouse.get_pos()
-            print(mPos)
             if (self.x <= mPos[0] and mPos[0] <= self.x + self.width) and (self.y <= mPos[1] and mPos[1] <= self.y + self.height):
                 self.color = (0,0,255)
             else:
@@ -176,27 +175,29 @@ def main():
 
     clock = pygame.time.Clock()
 
-    playersDict = player_data_todict(players)
-    #print(player_dict_tostr(playersDict))
     while run:
         clock.tick(60)
+        playersDict = player_data_todict(players)
+        #print(player_dict_tostr(playersDict))
 
         pDict = player_str_todict(n.send(player_dict_tostr(playersDict)))
         print(pDict)
         count = 0
         for player in players:
-            #print(pDict)
+            if count == 0:
+                count += 1
+                continue
             player.x = pDict[count]["pos"][0]
             player.y = pDict[count]["pos"][1]
             player.update()
             count += 1
-
+        #print(p.get_pos())
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
 
-        p.move()
+        players[0].move()
         redrawWindow(win, players)
 
 main()
