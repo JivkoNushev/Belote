@@ -111,6 +111,7 @@ def player_str_todict(playerDictString):
     return res
 
 pos = [(0, 0), (100, 100), (200, 200), (300, 300)]
+color = [(0,255,0),(255,0,0),(255,0,0),(255,0,0)]
 
 def threaded_client(conn, player):
     conn.send(str.encode(make_pos(pos[player])))
@@ -120,21 +121,19 @@ def threaded_client(conn, player):
             PlayerData = player_str_todict(conn.recv(2048).decode("utf-8"))
             
             pos[player] = PlayerData[player]["pos"]
+            print(pos[player])
+            color[player] = PlayerData[player]["color"]
             if not PlayerData:
                 print("Disconnected")
                 break
-            # else:
-            #     if player == 0:
-            #         reply = (pos[1], pos[2], pos[3])
-            #     elif player == 1:
-            #         reply = (pos[0], pos[2], pos[3])
-            #     elif player == 2:
-            #         reply = (pos[0], pos[1], pos[3])
-            #     else:
-            #         reply = (pos[0], pos[1], pos[2])
-               
-            #    print("Received: ", data[0])
-            #    print("Sending: ", reply)
+            
+            PlayerData[1]["pos"] = pos[1]
+            PlayerData[2]["pos"] = pos[2]
+            PlayerData[3]["pos"] = pos[3]
+
+            PlayerData[1]["color"] = color[1]
+            PlayerData[2]["color"] = color[2]
+            PlayerData[3]["color"] = color[3]
 
             conn.sendall(str.encode(player_dict_tostr(PlayerData)))
         except:
