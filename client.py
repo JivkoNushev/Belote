@@ -174,14 +174,14 @@ def main():
     p = players[0]
 
     clock = pygame.time.Clock()
-
+    
     while run:
         clock.tick(60)
         playersDict = player_data_todict(players)
         #print(player_dict_tostr(playersDict))
 
         pDict = player_str_todict(n.send(player_dict_tostr(playersDict)))
-        print(pDict)
+        #print(pDict)
         count = 0
         for player in players:
             if count == 0:
@@ -192,6 +192,9 @@ def main():
             player.update()
             count += 1
         #print(p.get_pos())
+        #print(players[0].get_pos())
+        print(players[0].color)
+        #print("\t\t\t\t\t\t" + str(players[1].get_pos()))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
