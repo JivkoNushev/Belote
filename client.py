@@ -189,11 +189,12 @@ def main():
                 continue
             player.x = pDict[count]["pos"][0]
             player.y = pDict[count]["pos"][1]
+            player.color = pDict[count]["color"]
             player.update()
             count += 1
         #print(p.get_pos())
         #print(players[0].get_pos())
-        print(players[0].color)
+        #print(players[0].color)
         #print("\t\t\t\t\t\t" + str(players[1].get_pos()))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

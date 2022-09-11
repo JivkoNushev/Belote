@@ -6,11 +6,16 @@ all:
 server:
 	CMD /C start python server.py
 
+run:
+	make
+	make
+	make
+	make
+
 open:
 	code ${FILES}
 
 OPEN:
 	gedit ${FILES}
 
-run:
-	python client.py network.py server.py
+
