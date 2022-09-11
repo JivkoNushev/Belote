@@ -123,7 +123,7 @@ def threaded_client(conn, player):
             pos[player] = PlayerData[0]["pos"]
             
             color[player] = PlayerData[0]["color"]
-            print(color)
+            print(PlayerData[0]["color"])
             if not PlayerData:
                 print("Disconnected")
                 break
