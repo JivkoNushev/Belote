@@ -120,20 +120,46 @@ def threaded_client(conn, player):
         try:
             PlayerData = player_str_todict(conn.recv(2048).decode("utf-8"))
             
-            pos[player] = PlayerData[player]["pos"]
-            print(pos[player])
-            color[player] = PlayerData[player]["color"]
+            pos[player] = PlayerData[0]["pos"]
+            
+            color[player] = PlayerData[0]["color"]
+            print(color)
             if not PlayerData:
                 print("Disconnected")
                 break
             
-            PlayerData[1]["pos"] = pos[1]
-            PlayerData[2]["pos"] = pos[2]
-            PlayerData[3]["pos"] = pos[3]
+            if player == 0:
+                PlayerData[1]["pos"] = pos[1]
+                PlayerData[2]["pos"] = pos[2]
+                PlayerData[3]["pos"] = pos[3]
 
-            PlayerData[1]["color"] = color[1]
-            PlayerData[2]["color"] = color[2]
-            PlayerData[3]["color"] = color[3]
+                PlayerData[1]["color"] = color[1]
+                PlayerData[2]["color"] = color[2]
+                PlayerData[3]["color"] = color[3]
+            elif player == 1:
+                PlayerData[1]["pos"] = pos[0]
+                PlayerData[2]["pos"] = pos[2]
+                PlayerData[3]["pos"] = pos[3]
+
+                PlayerData[1]["color"] = color[0]
+                PlayerData[2]["color"] = color[2]
+                PlayerData[3]["color"] = color[3]
+            elif player == 2:
+                PlayerData[1]["pos"] = pos[1]
+                PlayerData[2]["pos"] = pos[0]
+                PlayerData[3]["pos"] = pos[3]
+
+                PlayerData[1]["color"] = color[1]
+                PlayerData[2]["color"] = color[0]
+                PlayerData[3]["color"] = color[3]
+            else:
+                PlayerData[1]["pos"] = pos[1]
+                PlayerData[2]["pos"] = pos[2]
+                PlayerData[3]["pos"] = pos[0]
+
+                PlayerData[1]["color"] = color[1]
+                PlayerData[2]["color"] = color[2]
+                PlayerData[3]["color"] = color[0] 
 
             conn.sendall(str.encode(player_dict_tostr(PlayerData)))
         except:
