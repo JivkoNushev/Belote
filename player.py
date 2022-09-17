@@ -1,45 +1,45 @@
+import enum
+from turtle import heading, width
 import pygame
 
-class Player():
-    def __init__(self, x, y, width , height, color):
+class Card:
+    def __init__(self, name, suit, isTrump, x, y):
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
-        self.color = color
-        self.rect = (x, y, width, height)
-        self.velocity = 3
+        self.name = name
+        self.suit = suit
+        self.isTrump = isTrump
+        
+        self.body_image = pygame.image.load("CardSprites/" + name + "_" + suit + ".png")
+        self.body = self.body_image.get_rect()
+        self.body.x = self.x
+        self.body.y = self.y
 
-    def get_color(self):
-        return self.color
+        self.width = self.body_image.get_width()
+        self.height = self.body_image.get_height()
 
-    def get_width(self):
-        return self.width
-
-    def get_height(self):
-        return self.height
-
-    def get_pos(self):
-        return (self.x, self.y)
+    def update_card(self, x, y):
+        self.body.x = x
+        self.body.y = y
 
     def draw(self, win):
-        pygame.draw.rect(win, self.color, self.rect)
+        win.blit(self.body_image, self.body)
+    
+    def clicked(self, pos):
+        return (self.x <= pos[0] and pos[0] <= self.x + self.width) and (self.y <= pos[1] and pos[1] <= self.y + self.height)
+
+class Player():
+    def __init__(self, cards):
+        self.cards = cards
+
+    def get_cards(self):
+        return self.cards
+
+    def draw(self, win):
+        for card in self.cards:
+            card.draw(win)
 
     def move(self):
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_DOWN]:
-            self.y += self.velocity
-
-        if keys[pygame.K_UP]:
-            self.y -= self.velocity
-
-        if keys[pygame.K_RIGHT]:
-            self.x += self.velocity
-
-        if keys[pygame.K_LEFT]:
-            self.x -= self.velocity
-
         po = pygame.mouse.get_pressed()
         if po[0]:
             mPos = pygame.mouse.get_pos()
