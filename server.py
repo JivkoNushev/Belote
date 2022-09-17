@@ -1,7 +1,9 @@
 import socket
 import pickle
 from _thread import *
+from sqlite3 import connect
 from player import Player 
+from game import Game
 
 server = "192.168.0.27"
 port = 5555
@@ -13,51 +15,62 @@ try:
 except socket.error as e:
     print(str(e))
 
-s.listen(4)
+s.listen() # needs to be tested with/without parameters
 print("Waiting for connection")
 
-players = [Player(0,0,100,100,(0,255,0)), Player(100,100,100,100,(255,0,0)), Player(200,200,100,100,(255,0,0)), Player(300,300,100,100,(255,0,0))]
+connected = set()
+games = {}
+idCount = 0
 
-def threaded_client(conn, player):
-    conn.send(pickle.dumps(players[player]))
-    reply = [0,0,0,0]
+def threaded_client(conn, player, gameId):
+    global idCount
+    conn.send(str.encode(str(player)))
 
+    reply = ""
     while True:
         try:
-            PlayerData = pickle.loads(conn.recv(2048 * 10000))
-            players[player] = PlayerData
-            if not PlayerData:
-                print("Disconnected")
-                break
-            if player == 0:
-                reply[0] = players[1]
-                reply[1] = players[2]
-                reply[2] = players[3]
-            elif player == 1:
-                reply[0] = players[0]
-                reply[1] = players[2]
-                reply[2] = players[3]
-            elif player == 2:
-                reply[0] = players[1]
-                reply[1] = players[0]
-                reply[2] = players[3]
-            else:
-                reply[0] = players[1]
-                reply[1] = players[2]
-                reply[2] = players[0]
-            print(reply[0].get_pos())
+            data = conn.recv(2048 * 10000).decode()
 
-            conn.sendall(pickle.dumps(reply))
+            if gameId in games:
+                game = games[gameId]
+
+                if not data:
+                    break
+                else:
+                    if data == "reset":
+                        game.reset_moves()
+                    elif data != "get":
+                        game.player(player, data)
+                    
+                    reply = game
+                    conn.sendall(pickle.dumps(reply))
+            else:
+                break
         except:
             break
-    print("Connection lost")
+
+    print("Lost connection")
+    try:
+        del games[gameId]
+        print("Closing Game:", gameId)
+    except:
+        pass
+
+    idCount -= 1
     conn.close()
 
-
-currentPlayer = 0
 while True:
     conn, addr = s.accept()
     print("Connected to: ", addr)
 
-    start_new_thread(threaded_client, (conn, currentPlayer))
-    currentPlayer += 1
+    idCount += 1
+    gameId = (idCount - 1) // 4
+    player = (idCount - 1) % 4
+
+    if idCount % 4 == 1:
+        games[gameId] = Game(gameId)
+        print("Starting a new game")
+    elif idCount % 4 == 0:
+        games[gameId].ready = True
+
+    start_new_thread(threaded_client, (conn, player, gameId))
