@@ -30,19 +30,16 @@ def threaded_client(conn, player, gameId):
     while True:
         try:
             data = conn.recv(2048 * 10000).decode()
-
             if gameId in games:
                 game = games[gameId]
-
                 if not data:
                     break
                 else:
-                    if data == "reset":
-                        game.reset_moves()
-                    elif data != "get":
-                        game.player(player, data)
-                    
                     reply = game
+                    if data == "reset":
+                        reply.reset_moves()
+                    elif data != "get":
+                        reply.make_move(player, data)
                     conn.sendall(pickle.dumps(reply))
             else:
                 break
