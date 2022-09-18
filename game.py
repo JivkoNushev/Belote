@@ -1,12 +1,20 @@
 class Game:
     def __init__(self, id):
-        pass
+        self.id = id
+        self.t1_score = 0
+        self.t2_score = 0
+        self.moves = [0,0,0,0]
+        self.turn = 0
+
+    def get_moves(self):
+        return self.moves
 
     def get_player_move(self, player):
         pass
 
-    def player(self, player, move):
-        pass
+    def make_move(self, player, move):
+        self.moves[player] = move
+        self.turn = (self.turn + 1) % 4
 
     def connected(self):
         pass

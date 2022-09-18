@@ -1,4 +1,3 @@
-import enum
 from turtle import heading, width
 import pygame
 
@@ -28,9 +27,14 @@ class Card:
     def clicked(self, pos):
         return (self.x <= pos[0] and pos[0] <= self.x + self.width) and (self.y <= pos[1] and pos[1] <= self.y + self.height)
 
+all_cards = {"nine_clubs" : Card("nine", "clubs", False, 100,100), "nine_spades" : Card("nine", "spades", False, 300,100)}
+
 class Player():
     def __init__(self, cards):
-        self.cards = cards
+        if type(cards) != list:
+            self.cards = [cards]
+        else:
+            self.cards = cards
 
     def get_cards(self):
         return self.cards
@@ -47,7 +51,6 @@ class Player():
                 self.color = (0,0,255)
             else:
                 self.color = (0,255,0)
-
 
         self.update()
 
