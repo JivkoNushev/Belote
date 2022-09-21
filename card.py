@@ -24,6 +24,7 @@ class Card:
 
     def update_body(self, new_body_image):
         self.body = new_body_image.get_rect()
+        self.body_image = new_body_image
 
     def draw(self, win):
         win.blit(self.body_image, self.body)
