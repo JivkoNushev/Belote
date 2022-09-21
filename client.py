@@ -98,6 +98,7 @@ def main():
             break
 
         if game.everyone_played():
+            redrawWindow(win, game.get_moves(), player, game.get_players_number_of_cards())
             pygame.time.delay(1000)
             try:
                 game = n.send("reset")

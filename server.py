@@ -5,7 +5,7 @@ from sqlite3 import connect
 from player import Player 
 from game import Game
 
-server = "192.168.0.27"
+server = "25.29.74.26"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
