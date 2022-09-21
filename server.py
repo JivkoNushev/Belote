@@ -40,6 +40,7 @@ def threaded_client(conn, player, gameId):
                         reply.reset_moves()
                     elif data != "get":
                         reply.make_move(player, data)
+                        reply.players_number_of_cards[player] -= 1
                     conn.sendall(pickle.dumps(reply))
             else:
                 break

@@ -2,38 +2,92 @@ import pygame
 import pickle
 from network import Network
 from player import Player
-from player import Card
+from card import Card
+from game import Game
 
-win_height = 500
-win_width = 500
+win_height = 1000
+win_width = 1000
 
 win = pygame.display.set_mode((win_height, win_width))
 pygame.display.set_caption("Client")
 
 clientNumber = 0
-all_cards = {"nine_clubs" : Card("nine", "clubs", False, 100,100), "nine_spades" : Card("nine", "spades", False, 300,100)}
-def redrawWindow(win, cards):
-    win.fill((255,255,255))
-    for card in cards:
-        if card == 0:
-            break
-        all_cards[card].draw(win)
-    pygame.display.update()
 
-cards = ["nine_clubs"]
-cards2 = ["nine_spades"]
+def redrawWindow(win, played_cards, player, players_number_of_cards):
+    win.fill((160,32,240))
+
+    first_player_id = player.get_id()
+    player_id = player.get_id()
+    player_start_x = (win_width - 8 * 50) // 2 # 50 is half of the width of a card
+    player_start_y = win_height - 100 # 100 is the height of a card
+    count = 0
+    for i in range(0,players_number_of_cards[first_player_id]):
+        player.cards[i].update_pos(player_start_x + count * 50, player_start_y)
+        player.cards[i].draw(win)
+        count += 1
+    
+    to_the_side = False
+    for i in range(0,3):
+        back_card = Card("back", "", False, 0, 0)
+        player_id = (player_id + 1) % 4
+        if i == 0:
+            player_start_y = (win_height - 8 * 50) // 2
+            player_start_x = win_width - 100
+            back_card.update_body(pygame.transform.rotate(back_card.body_image, 90))
+            to_the_side = True
+        elif i == 1:
+            player_start_x = (win_width - 8 * 50) // 2
+            player_start_y = 0
+            back_card.update_body(pygame.transform.rotate(back_card.body_image, 180))
+            to_the_side = False
+        else:
+            player_start_y = (win_height - 8 * 50) // 2
+            player_start_x = 0
+            back_card.update_body(pygame.transform.rotate(back_card.body_image, 270))
+            to_the_side = True
+
+        count = 0
+        for j in range(0, players_number_of_cards[player_id]):
+            if to_the_side:
+                back_card.update_pos(player_start_x, player_start_y + count * 50)
+            else:
+                back_card.update_pos(player_start_x + count * 50, player_start_y)
+            back_card.draw(win)
+            count += 1
+
+    for i in range(0, 4):
+        if played_cards[i] == 0:
+            continue
+        card = played_cards[i].split("_")
+        back_card = Card(card[0], card[1], False, 0, 0)
+        if i == first_player_id:
+            player_start_x = win_width // 2 - 25 # 25 is one half of a card
+            player_start_y = win_height / 2
+        elif i == (first_player_id + 1) % 4:
+            player_start_y = win_height // 2 - 25
+            player_start_x = win_width // 2
+            back_card.update_body(pygame.transform.rotate(back_card.body_image, 90))
+        elif i == (first_player_id + 2) % 4:
+            player_start_x = win_width // 2 - 25
+            player_start_y = win_height // 2 
+            back_card.update_body(pygame.transform.rotate(back_card.body_image, 180))
+        else:
+            player_start_y = win_height // 2 - 25
+            player_start_x = win_width // 2
+            back_card.update_body(pygame.transform.rotate(back_card.body_image, 270))
+
+        back_card.update_pos(player_start_x, player_start_y)
+        back_card.draw(win)
+
+    pygame.display.update()
 
 def main():
     run = True
     clock = pygame.time.Clock()
-
     n = Network()
-    player = int(n.getPlayer())
-    p1 = Player([all_cards[cards[0]], all_cards[cards2[0]]])
-    p2 = Player(all_cards[cards2[0]])
-    players = [p1,p2]
-    redrawWindow(win, cards)
-    redrawWindow(win, cards2)
+    player_id = int(n.getPlayer())
+    player = Player(player_id, Game.deal_num_cards(8))
+
     while run:
         clock.tick(60)
         try:
@@ -42,6 +96,7 @@ def main():
             run = False
             print("Couldn't get game")
             break
+
         if game.both_played():
             redrawWindow()
             pygame.time.delay(500)
@@ -52,23 +107,20 @@ def main():
                 print("Couldn't get game")
                 break
         pygame.display.update()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                if game.turn == player:
-                    for card in players[player].cards:
+                if game.turn == player_id:
+                    for card in player.cards:
                         if card.clicked(pos):
                             move = card.name + "_" + card.suit
+                            player.get_cards().remove(card)
                             game = n.send(move)
-        count = 0
-        for card in game.get_moves():
-            if card != 0:
-                all_cards[card].update_card(50 + count * 50, 200)
-                count += 1
 
-        redrawWindow(win, game.get_moves())
+        redrawWindow(win, game.get_moves(), player, game.get_players_number_of_cards())
 
 main()

@@ -1,40 +1,19 @@
+from cmath import rect
 from turtle import heading, width
 import pygame
 
-class Card:
-    def __init__(self, name, suit, isTrump, x, y):
-        self.x = x
-        self.y = y
-        self.name = name
-        self.suit = suit
-        self.isTrump = isTrump
-        
-        self.body_image = pygame.image.load("CardSprites/" + name + "_" + suit + ".png")
-        self.body = self.body_image.get_rect()
-        self.body.x = self.x
-        self.body.y = self.y
-
-        self.width = self.body_image.get_width()
-        self.height = self.body_image.get_height()
-
-    def update_card(self, x, y):
-        self.body.x = x
-        self.body.y = y
-
-    def draw(self, win):
-        win.blit(self.body_image, self.body)
-    
-    def clicked(self, pos):
-        return (self.x <= pos[0] and pos[0] <= self.x + self.width) and (self.y <= pos[1] and pos[1] <= self.y + self.height)
-
-all_cards = {"nine_clubs" : Card("nine", "clubs", False, 100,100), "nine_spades" : Card("nine", "spades", False, 300,100)}
-
 class Player():
-    def __init__(self, cards):
+    def __init__(self, id, cards):
+        self.id = id
         if type(cards) != list:
             self.cards = [cards]
+        elif cards == 0:
+            cards = []
         else:
             self.cards = cards
+
+    def get_id(self):
+        return self.id
 
     def get_cards(self):
         return self.cards
@@ -54,5 +33,9 @@ class Player():
 
         self.update()
 
-    def update(self):
-        self.rect = (self.x, self.y, self.width, self.height)
+    def get_card(self,card):
+        self.cards.append(card)
+
+    def play_turn(self, card_number, cards_on_table):
+        cards_on_table.append(self.cards[card_number])
+        del self.cards[card_number]
