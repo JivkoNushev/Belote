@@ -61,19 +61,19 @@ def redrawWindow(win, played_cards, player, players_number_of_cards):
         card = played_cards[i].split("_")
         back_card = Card(card[0], card[1], False, 0, 0)
         if i == first_player_id:
-            player_start_x = win_width // 2 - 25 # 25 is one half of a card
+            player_start_x = win_width // 2 - 50 # 25 is one half of a card
             player_start_y = win_height / 2
         elif i == (first_player_id + 1) % 4:
             player_start_y = win_height // 2 - 25
             player_start_x = win_width // 2
             back_card.update_body(pygame.transform.rotate(back_card.body_image, 90))
         elif i == (first_player_id + 2) % 4:
-            player_start_x = win_width // 2 - 25
-            player_start_y = win_height // 2 
+            player_start_x = win_width // 2 - 50
+            player_start_y = win_height // 2 - 100
             back_card.update_body(pygame.transform.rotate(back_card.body_image, 180))
         else:
             player_start_y = win_height // 2 - 25
-            player_start_x = win_width // 2
+            player_start_x = win_width // 2 - 100
             back_card.update_body(pygame.transform.rotate(back_card.body_image, 270))
 
         back_card.update_pos(player_start_x, player_start_y)
@@ -97,9 +97,8 @@ def main():
             print("Couldn't get game")
             break
 
-        if game.both_played():
-            redrawWindow()
-            pygame.time.delay(500)
+        if game.everyone_played():
+            pygame.time.delay(1000)
             try:
                 game = n.send("reset")
             except:
@@ -120,7 +119,7 @@ def main():
                             move = card.name + "_" + card.suit
                             player.get_cards().remove(card)
                             game = n.send(move)
-
+        print(player_id)
         redrawWindow(win, game.get_moves(), player, game.get_players_number_of_cards())
 
 main()

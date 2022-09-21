@@ -37,14 +37,17 @@ class Game:
     def connected(self):
         pass
 
-    def both_played(self):
-        pass
+    def everyone_played(self):
+        for move in self.moves:
+            if move == 0:
+                return False
+        return True
 
     def winner(self):
         pass
 
     def reset_moves(self): # resets the played action
-        pass
+        self.moves = [0,0,0,0]
 
     def get_players_number_of_cards(self):
         return self.players_number_of_cards
@@ -58,11 +61,13 @@ class Game:
             del deck[0]
 
     def deal_num_cards(n):
-        copy_of_cards = card_keys
+        random.shuffle(card_keys)
         cards = []
         for i in range(0, n):
-            cards.append(all_cards[copy_of_cards[0]]) 
-            copy_of_cards.pop(0)
+
+
+            cards.append(all_cards[card_keys[0]]) 
+            card_keys.pop(0)
         return cards
 
     def play_game(players,cards_on_table,first_pl,type):
