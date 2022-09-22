@@ -4,6 +4,7 @@ from _thread import *
 from sqlite3 import connect
 from player import Player 
 from game import Game
+from card import Card
 
 server = "25.29.74.26"
 port = 5555
@@ -17,6 +18,19 @@ except socket.error as e:
 
 s.listen() # needs to be tested with/without parameters
 print("Waiting for connection")
+
+all_cards = dict()
+
+card_names = ["seven", "eight", "nine", "jack", "queen", "king", "ten", "ace"]
+card_suits = ["clubs", "diamonds", "hearts", "spades"]
+card_keys = []
+
+for i in range(0, 32):
+    card_name = card_names[i % 8]
+    card_suit = card_suits[i // 8]
+    key = card_name + "_" + card_suit
+    card_keys.append(key)
+    all_cards[key] = Card(card_name, card_suit, False, 0, 0)
 
 connected = set()
 games = {}
@@ -37,6 +51,9 @@ def threaded_client(conn, player, gameId):
                 else:
                     reply = game
                     if data == "reset":
+                        winn = reply.eval_winner()
+                        if winn != -1:
+                            reply.update_score(winn)
                         reply.reset_moves()
                     elif data != "get":
                         reply.make_move(player, data)
