@@ -10,16 +10,20 @@ win_width = 1000
 
 win = pygame.display.set_mode((win_height, win_width))
 pygame.display.set_caption("Client")
-
+pygame.init()
 clientNumber = 0
 
-def redrawWindow(win, played_cards, player, players_number_of_cards):
+def redrawWindow(win, game, player):
     win.fill((160,32,240))
 
+    played_cards = game.moves
+    players_number_of_cards = game.players_number_of_cards
+    team_points = (game.t1_score, game.t2_score)
     first_player_id = player.get_id()
     player_id = player.get_id()
     player_start_x = (win_width - 8 * 50) // 2 # 50 is half of the width of a card
     player_start_y = win_height - 100 # 100 is the height of a card
+
     count = 0
     for i in range(0,players_number_of_cards[first_player_id]):
         player.cards[i].update_pos(player_start_x + count * 50, player_start_y)
@@ -79,6 +83,12 @@ def redrawWindow(win, played_cards, player, players_number_of_cards):
         back_card.update_pos(player_start_x, player_start_y)
         back_card.draw(win)
 
+    font = pygame.font.SysFont(None, 50)
+    score1 = font.render(str(team_points[0]), True, (0, 0, 0))
+    score2 = font.render(str(team_points[1]), True, (0, 0, 0))
+    win.blit(score1, (0,0))
+    win.blit(score2, (0,30))
+
     pygame.display.update()
 
 def main():
@@ -98,7 +108,7 @@ def main():
             break
 
         if game.everyone_played():
-            redrawWindow(win, game.get_moves(), player, game.get_players_number_of_cards())
+            redrawWindow(win, game, player)
             pygame.time.delay(1000)
             try:
                 game = n.send("reset")
@@ -118,9 +128,10 @@ def main():
                     for card in player.cards:
                         if card.clicked(pos):
                             move = card.name + "_" + card.suit
-                            player.get_cards().remove(card)
-                            game = n.send(move)
-        print(player_id)
-        redrawWindow(win, game.get_moves(), player, game.get_players_number_of_cards())
+                            if game.check_move(move, player) == True:
+                                player.get_cards().remove(card)
+                                game = n.send(move)
+        #print(player_id)
+        redrawWindow(win, game, player)
 
 main()
