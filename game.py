@@ -84,7 +84,31 @@ class Game:
         return winn
 
     def suit_trump(self, suit):
-        pass
+        best_card = self.moves[self.turn].split("_")
+        winn = self.turn
+        trumps_in_game = 0
+        
+        for i in range(0,4):
+            if self.moves[i] != 0:
+                card = self.moves[i].split("_")
+                if card.isTrump:
+                    trumps_in_game += 1
+                
+                if trumps_in_game == 0:
+                    if card[1] == best_card[1]:
+                        if self.noTrumpsOrder[card[0]] > self.noTrumpsOrder[best_card[0]]:
+                            best_card[0] = card[0]
+                            winn = i
+                else:
+                    if trumps_in_game == 1:
+                        best_card[0] = card[0]
+                        best_card[1] = card[1]
+                        winn = i
+                    else:
+                        if card.isTrump and self.TrumpsOrder[card[0]] > self.TrumpsOrder[best_card[0]]:
+                            best_card[0] = card[0]
+                            winn = i
+        return winn
     
     def update_score(self, winner):
         if 0 in self.moves:
