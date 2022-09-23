@@ -1,3 +1,4 @@
+from operator import truediv
 import pygame
 import pickle
 from network import Network
@@ -86,17 +87,34 @@ def redrawWindow(win, game, player):
     font = pygame.font.SysFont(None, 50)
     score1 = font.render(str(team_points[0]), True, (0, 0, 0))
     score2 = font.render(str(team_points[1]), True, (0, 0, 0))
+    playerID = font.render(str((player_id + 1) % 4), True, (0, 0, 0))
     win.blit(score1, (0,0))
     win.blit(score2, (0,30))
+    win.blit(playerID, (30,0))
 
     pygame.display.update()
+
+def print_close_game():
+    win.fill((160,32,240))
+    wait_text = pygame.font.SysFont(None, 50).render("Game Ended/Somebody Left", True, (0, 0, 0))
+    wait_text_rect = wait_text.get_rect(center=(win_width/2, win_height/2))
+    win.blit(wait_text,wait_text_rect)
+    pygame.display.update()
+
+def print_wait_game():
+    win.fill((160,32,240))
+    wait_text = pygame.font.SysFont(None, 50).render("Waiting for players", True, (0, 0, 0))
+    wait_text_rect = wait_text.get_rect(center=(win_width/2, win_height/2))
+    win.blit(wait_text,wait_text_rect)
+    pygame.display.update()
+
 
 def main():
     run = True
     clock = pygame.time.Clock()
     n = Network()
     player_id = int(n.getPlayer())
-    player = Player(player_id, Game.deal_num_cards(8))
+    dealt = False
 
     while run:
         clock.tick(60)
@@ -104,8 +122,16 @@ def main():
             game = n.send("get")
         except:
             run = False
+            print_close_game()
+            pygame.time.delay(2000)
             print("Couldn't get game")
             break
+        if game.deal == True and dealt == False:
+            player = Player(player_id, Game.deal_num_cards(8))
+            dealt = True
+        if not dealt:
+            print_wait_game()
+            continue
 
         if game.everyone_played():
             redrawWindow(win, game, player)
@@ -121,6 +147,8 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                print_close_game()
+                pygame.time.delay(2000)
                 pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()

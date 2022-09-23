@@ -26,6 +26,7 @@ class Game:
         self.turn = 0
         self.type = "no_trumps"
         self.trump = ""
+        self.deal = False
         _deck = random.shuffle(card_keys)
 
         self.noTrumpsOrder = {"seven" : 0, "eight": 1, "nine" : 2, "jack": 3, "queen": 4, "king": 5, "ten": 6, "ace": 7}
@@ -162,51 +163,3 @@ class Game:
             cards.append(all_cards[card_keys[0]]) 
             card_keys.pop(0)
         return cards
-
-    def deal_cards(players,deck,number_of_cards):
-        player_index=0
-        for i in range(number_of_cards*4):
-            if i%number_of_cards == 0 and i!=0:
-                player_index+=1
-            players[player_index].get_card(deck[0])
-            del deck[0]
-
-    def play_game(players,cards_on_table,first_pl,type):
-        winner=0
-        points=0
-        for i in range(4):
-            card=0
-            print(players[first_pl+i%4].cards[card].suit,players[first_pl+i%4].cards[card].number)
-            if players[first_pl+i%4].cards[card].number==14:
-                if type==1 or players[first_pl+i%4].cards[card].suit==type:
-                    players[first_pl%4].cards[card].number=12
-                points+=11
-            elif players[first_pl+i%4].cards[card].number==13:
-                if type==1 or players[first_pl+i%4].cards[card].suit==type:
-                        players[first_pl%4].cards[card].number=11
-                points+=10
-            elif players[first_pl+i%4].cards[card].number==12:
-                if type==1 or players[first_pl+i%4].cards[card].suit==type:
-                    players[first_pl%4].cards[card].number=10
-                points+=4
-            elif players[first_pl+i%4].cards[card].number==11:
-                if type==1 or players[first_pl+i%4].cards[card].suit==type:
-                    players[first_pl%4].cards[card].number=9
-                points+=3
-            elif players[first_pl%4].cards[card].number==10:
-                if type==1 or players[first_pl+i%4].cards[card].suit==type:
-                    players[first_pl%4].cards[card].number=14
-                    points+=20
-                else: 
-                    points+=2
-            elif players[first_pl%4].cards[card].number==9:
-                if type==1 or players[first_pl+i%4].cards[card].suit==type:
-                    players[first_pl%4].cards[card].number=13
-                    points+=14
-            players[(first_pl+i)%4].play_turn(card,cards_on_table)
-            if cards_on_table[i].suit==type and cards_on_table[winner].suit!=type:
-                winner=(first_pl+i)%4
-            if cards_on_table[i].number>cards_on_table[winner].number and cards_on_table[i].suit==cards_on_table[winner].suit:
-                winner=(first_pl+i)%4
-            
-        return points*10+winner
