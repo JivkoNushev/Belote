@@ -50,6 +50,7 @@ def threaded_client(conn, player, gameId):
                     break
                 else:
                     reply = game
+
                     if data == "reset":
                         winn = reply.eval_winner()
                         if winn != -1:
@@ -58,6 +59,12 @@ def threaded_client(conn, player, gameId):
                     elif data != "get":
                         reply.make_move(player, data)
                         reply.players_number_of_cards[player] -= 1
+
+                    if idCount % 4 == 0:
+                        reply.deal = True
+                    else:
+                        reply.deal = False
+                    
                     conn.sendall(pickle.dumps(reply))
             else:
                 break
