@@ -56,6 +56,10 @@ def threaded_client(conn, player, gameId):
                         if winn != -1:
                             reply.update_score(winn)
                         reply.reset_moves()
+                    elif data == "deal8":
+                        for i in range(0,8):
+                            reply.deck.pop(0)
+                        reply.deal_turn = (reply.deal_turn + 1)%4
                     elif data != "get":
                         reply.make_move(player, data)
                         reply.players_number_of_cards[player] -= 1
