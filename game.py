@@ -24,11 +24,12 @@ class Game:
         self.moves = [0,0,0,0]
         self.players_number_of_cards = [8,8,8,8]
         self.turn = 0
+        self.deal_turn = 0
         self.type = "no_trumps"
         self.trump = ""
         self.deal = False
-        _deck = random.shuffle(card_keys)
-
+        self.deck = card_keys
+        random.shuffle(self.deck)
         self.noTrumpsOrder = {"seven" : 0, "eight": 1, "nine" : 2, "jack": 3, "queen": 4, "king": 5, "ten": 6, "ace": 7}
         self.TrumpsOrder = {"seven" : 0, "eight": 1, "queen": 2, "king": 3, "ten": 4, "ace": 5, "nine" : 6, "jack": 7}
 
@@ -150,16 +151,19 @@ class Game:
         if self.type == "no_trumps":
             return self.check_for_noTrumps(move, player)
 
+        if self.type == "suit_trump":
+            return self.check_for_suit_Trump(move, player)
+
     def reset_moves(self): # resets the played action
         self.moves = [0,0,0,0]
 
     def get_players_number_of_cards(self):
         return self.players_number_of_cards
     
-    def deal_num_cards(n):
-        random.shuffle(card_keys)
+    def deal_num_cards(self, n):
         cards = []
         for i in range(0, n):
-            cards.append(all_cards[card_keys[0]]) 
-            card_keys.pop(0)
+            cards.append(all_cards[self.deck[i]]) 
         return cards
+
+   

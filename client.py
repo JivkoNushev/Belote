@@ -90,7 +90,7 @@ def redrawWindow(win, game, player):
     playerID = font.render(str((player_id + 1) % 4), True, (0, 0, 0))
     win.blit(score1, (0,0))
     win.blit(score2, (0,30))
-    win.blit(playerID, (30,0))
+    win.blit(playerID, (win_width - 30,0))
 
     pygame.display.update()
 
@@ -126,8 +126,9 @@ def main():
             pygame.time.delay(2000)
             print("Couldn't get game")
             break
-        if game.deal == True and dealt == False:
-            player = Player(player_id, Game.deal_num_cards(8))
+        if game.deal == True and dealt == False and game.deal_turn == player_id:
+            player = Player(player_id, game.deal_num_cards(8))
+            game = n.send("deal8")
             dealt = True
         if not dealt:
             print_wait_game()
@@ -159,7 +160,6 @@ def main():
                             if game.check_move(move, player) == True:
                                 player.get_cards().remove(card)
                                 game = n.send(move)
-        #print(player_id)
         redrawWindow(win, game, player)
 
 main()
