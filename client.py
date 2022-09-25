@@ -49,7 +49,6 @@ def main():
         dealt_second = False
         dealt_third = False
         while not game.playing:
-            
             if game.deal == True and game.deal_turn == player_id and dealt_first == False:
                 player.deal(game.deal_num_cards(3))
                 game = n.send("deal3")
@@ -62,17 +61,6 @@ def main():
                 ui.print_wait_game(win)
                 game = n.send("get")
                 continue
-            try:
-                game = n.send("get")
-            
-
-            except:
-                run = False
-                ui.print_close_game(win)
-                pygame.time.delay(2000)
-                print("Couldn't get game")
-                break
-            
             #print(game.players_number_of_cards)
             ui.redrawWindow(win, game, player, True)
             for event in pygame.event.get():
