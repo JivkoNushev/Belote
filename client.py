@@ -62,7 +62,16 @@ def main():
                 ui.print_wait_game(win)
                 game = n.send("get")
                 continue
-            game = n.send("get")
+            try:
+                game = n.send("get")
+            
+
+            except:
+                run = False
+                ui.print_close_game(win)
+                pygame.time.delay(2000)
+                print("Couldn't get game")
+                break
             
             #print(game.players_number_of_cards)
             ui.redrawWindow(win, game, player, True)
