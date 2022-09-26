@@ -14,26 +14,20 @@ for i in range(0, 32):
     card_suit = card_suits[i // 8]
     key = card_name + "_" + card_suit
     card_keys.append(key)
-    all_cards[key] = Card(0,0,card_name, card_suit, False)
+    all_cards[key] = Card(card_name, card_suit, False, 0, 0)
 
 class Game:
     def __init__(self, id):
         self.id = id
-        self.playing = False
         self.t1_score = 0
         self.t2_score = 0
         self.moves = [0,0,0,0]
-        self.players_number_of_cards = [0,0,0,0]
+        self.players_number_of_cards = [8,8,8,8]
         self.turn = 0
         self.deal_turn = 0
-        self.change_type_turn = 0
-        self.types_calls = [0,0,0,0]
-        self.score_multiplier = 1
-        
-
-        self.type = ""
+        self.type = "no_trumps"
         self.trump = ""
-        self.deal = True
+        self.deal = False
         self.deck = card_keys
         random.shuffle(self.deck)
         self.noTrumpsOrder = {"seven" : 0, "eight": 1, "nine" : 2, "jack": 3, "queen": 4, "king": 5, "ten": 6, "ace": 7}
@@ -41,12 +35,11 @@ class Game:
 
         self.noTrumpsValue = {"seven" : 0, "eight": 0, "nine" : 0, "jack": 2, "queen": 3, "king": 4, "ten": 10, "ace": 11}
         self.TrumpsValue = {"seven" : 0, "eight": 0, "queen": 3, "king": 4, "ten": 10, "ace": 11, "nine" : 14, "jack": 20}
-        self.gameTypes = {"clubs": 0, "diamonds": 1, "hearts": 2, "spades": 3, "no_trumps": 4, "all_trumps": 5}
-
+        
     def get_moves(self):
         return self.moves
 
-    def ended(self):
+    def get_player_move(self, player):
         pass
 
     def make_move(self, player, move):
@@ -61,11 +54,6 @@ class Game:
             if move == 0:
                 return False
         return True
-
-    def change_trump(self, suit):
-        self.trump = suit
-        for card in self.deck:
-            all_cards[card].isTrump = True
 
     def all_trumps(self):
         best_card = self.moves[self.turn].split("_")
@@ -193,10 +181,6 @@ class Game:
     def reset_moves(self): # resets the played action
         self.moves = [0,0,0,0]
 
-    def reset_deck(self):
-        self.deck = card_keys
-        random.shuffle(self.deck)
-
     def get_players_number_of_cards(self):
         return self.players_number_of_cards
     
@@ -206,27 +190,4 @@ class Game:
             cards.append(all_cards[self.deck[i]]) 
         return cards
 
-    def can_call_game_type(self, game_type):
-        if game_type == "pass":
-            return True
-        if self.type == "":
-            if game_type == "2x" or game_type == "4x":
-                return False
-            return True
-        
-        if game_type == "2x":
-            if self.score_multiplier == 1:
-                return True
-            else:
-                return False
-        if game_type == "4x":
-            if self.score_multiplier == 2:
-                return True
-            else:
-                return False
-
-        if self.gameTypes[game_type] <= self.gameTypes[self.type]:
-            return False
-
-        return True
    

@@ -3,13 +3,18 @@ from turtle import heading, width
 import pygame
 
 class Player():
-    def __init__(self, id):
+    def __init__(self, id, cards):
         self.id = id
-        self.cards = []
+        if type(cards) != list:
+            self.cards = [cards]
+        elif cards == 0:
+            cards = []
+        else:
+            self.cards = cards
 
     def get_id(self):
         return self.id
-    
+
     def get_cards(self):
         return self.cards
 
@@ -23,8 +28,3 @@ class Player():
     def draw(self, win):
         for card in self.cards:
             card.draw(win)
-
-    def deal(self, cards):
-        for card in cards:
-            self.cards.append(card)
-
