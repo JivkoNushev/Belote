@@ -1,7 +1,7 @@
 import pygame
 
 class Card:
-    def __init__(self, name, suit, isTrump, x, y):
+    def __init__(self, x, y, name, suit, isTrump = 0):
         self.x = x
         self.y = y
         self.name = name
