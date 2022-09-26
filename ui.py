@@ -58,9 +58,10 @@ def redrawWindow(win, game, player, choosing_game_type = False):
     player_start_y = win_height - 100 # 100 is the height of a card
 
     count = 0
-    for i in range(0, players_number_of_cards[first_player_id]):
-        player.cards[i].update_pos(player_start_x + count * 50, player_start_y)
-        player.cards[i].draw(win)
+    #for i in range(0, players_number_of_cards[player_id]):
+    for card in player.cards:
+        card.update_pos(player_start_x + count * 50, player_start_y)
+        card.draw(win)
         count += 1
     
     to_the_side = False

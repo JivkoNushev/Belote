@@ -15,7 +15,7 @@ clientNumber = 0
 def main():
     clock = pygame.time.Clock()
     run = True
-    main_menu_loop = True
+    main_menu_loop = False
 
     while main_menu_loop:
         ui.print_main_menu(win)
@@ -30,14 +30,13 @@ def main():
 
     n = Network()
     player_id = int(n.getPlayer())
+    player = Player(player_id)
+    dealt_third = False
 
     while run:
         clock.tick(60)
-        player = Player(player_id)
         try:
             game = n.send("get")
-            
-
         except:
             run = False
             ui.print_close_game(win)
@@ -47,8 +46,10 @@ def main():
 
         dealt_first = False
         dealt_second = False
-        dealt_third = False
+        
         while not game.playing:
+            dealt_third = False
+            game = n.send("get")
             if game.deal == True and game.deal_turn == player_id and dealt_first == False:
                 player.deal(game.deal_num_cards(3))
                 game = n.send("deal3")
@@ -89,27 +90,33 @@ def main():
                             game_type = "2x"
                         elif ui.buttons[8].clicked(pos):
                             game_type = "4x"
-                        print(game_type)
                         if game.can_call_game_type(game_type):
                             game = n.send(game_type)
-        
-        while True:
-            if game.deal_turn == player_id and dealt_second == True and dealt_third == False:
+
+        while dealt_third == False:
+            if game.deal == True and game.deal_turn == player_id and dealt_second == True and dealt_third == False:
                 player.deal(game.deal_num_cards(3))
                 game = n.send("deal3")
                 dealt_third = True
                 break
-            if not dealt_third:
-                game = n.send("get")
-                ui.redrawWindow(win, game, player, True)
+            game = n.send("get")
+            ui.print_wait_game(win)
+
+        if game.ended():
+            try:
+                game = n.send("get_type")
                 continue
+            except:
+                run = False
+                print("Couldn't get game")
+                break
+
 
         if game.everyone_played():
             ui.redrawWindow(win, game, player)
             pygame.time.delay(1000)
             try:
                 game = n.send("reset")
-                game = n.send("get_type")
                 continue
             except:
                 run = False

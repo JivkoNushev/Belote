@@ -46,7 +46,7 @@ class Game:
     def get_moves(self):
         return self.moves
 
-    def get_player_move(self, player):
+    def ended(self):
         pass
 
     def make_move(self, player, move):
@@ -207,6 +207,8 @@ class Game:
         return cards
 
     def can_call_game_type(self, game_type):
+        if game_type == "pass":
+            return True
         if self.type == "":
             if game_type == "2x" or game_type == "4x":
                 return False
@@ -223,7 +225,7 @@ class Game:
             else:
                 return False
 
-        if self.gameTypes[game_type] <= self.type:
+        if self.gameTypes[game_type] <= self.gameTypes[self.type]:
             return False
 
         return True
