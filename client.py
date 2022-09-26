@@ -97,11 +97,14 @@ def main():
             if game.deal == True and game.deal_turn == player_id and dealt_second == True and dealt_third == False:
                 player.deal(game.deal_num_cards(3))
                 game = n.send("deal3")
+                player.cards = game.order_cards(player.cards)
                 dealt_third = True
                 break
             game = n.send("get")
             ui.print_wait_game(win)
-
+        
+        player.call()
+        
         if game.ended():
             try:
                 game = n.send("get_type")

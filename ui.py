@@ -3,8 +3,8 @@ from card import Card
 from player import Player
 from game import Game
 
-win_height = 1000
-win_width = 1000
+win_height = 850
+win_width = 850
 
 class Button:
     def __init__(self, text, x, y, width = 1, height = 1, color = (0,255,0)):

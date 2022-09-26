@@ -7,6 +7,7 @@ all_cards = dict()
 
 card_names = ["seven", "eight", "nine", "jack", "queen", "king", "ten", "ace"]
 card_suits = ["clubs", "diamonds", "hearts", "spades"]
+call_order = {"seven" : 0, "eight": 1, "nine" : 2, "ten": 3, "jack": 4, "queen": 5, "king": 6, "ace": 7}
 card_keys = []
 
 for i in range(0, 32):
@@ -30,7 +31,6 @@ class Game:
         self.types_calls = [0,0,0,0]
         self.score_multiplier = 1
         
-
         self.type = ""
         self.trump = ""
         self.deal = True
@@ -42,10 +42,13 @@ class Game:
         self.noTrumpsValue = {"seven" : 0, "eight": 0, "nine" : 0, "jack": 2, "queen": 3, "king": 4, "ten": 10, "ace": 11}
         self.TrumpsValue = {"seven" : 0, "eight": 0, "queen": 3, "king": 4, "ten": 10, "ace": 11, "nine" : 14, "jack": 20}
         self.gameTypes = {"clubs": 0, "diamonds": 1, "hearts": 2, "spades": 3, "no_trumps": 4, "all_trumps": 5}
-
+        
     def get_moves(self):
         return self.moves
 
+    def get_player_move(self, player):
+        pass
+    
     def ended(self):
         pass
 
@@ -61,7 +64,7 @@ class Game:
             if move == 0:
                 return False
         return True
-
+    
     def change_trump(self, suit):
         self.trump = suit
         for card in self.deck:
@@ -95,7 +98,8 @@ class Game:
         
         return winn
 
-    def suit_trump(self, suit):
+    def suit_trump(self):
+        suit = self.trump
         best_card = self.moves[self.turn].split("_")
         winn = self.turn
         trumps_in_game = 0
@@ -103,7 +107,7 @@ class Game:
         for i in range(0,4):
             if self.moves[i] != 0:
                 card = self.moves[i].split("_")
-                if card.isTrump:
+                if card[1] == suit:
                     trumps_in_game += 1
                 
                 if trumps_in_game == 0:
@@ -112,16 +116,17 @@ class Game:
                             best_card[0] = card[0]
                             winn = i
                 else:
-                    if trumps_in_game == 1:
+                    if trumps_in_game == 1 and card[1] == suit:
                         best_card[0] = card[0]
                         best_card[1] = card[1]
                         winn = i
                     else:
-                        if card.isTrump and self.TrumpsOrder[card[0]] > self.TrumpsOrder[best_card[0]]:
+                        if card[1] == suit and self.TrumpsOrder[card[0]] > self.TrumpsOrder[best_card[0]]:
                             best_card[0] = card[0]
                             winn = i
+        
         return winn
-    
+                    
     def update_score(self, winner):
         if 0 in self.moves:
             return -1
@@ -138,7 +143,13 @@ class Game:
                     temp = self.moves[i].split("_")
                     res += self.noTrumpsValue[temp[0]]
         else:
-            pass
+            for i in range(0,4):
+                if self.moves[i] != 0:
+                    temp = self.moves[i].split("_")
+                    if temp[1] == self.trump:
+                        res += self.TrumpsValue[temp[0]]
+                    else:
+                        res += self.noTrumpsValue[temp[0]]  
         
         if winner % 2 == 0:
             self.t1_score += res
@@ -161,7 +172,32 @@ class Game:
         return winn
 
     def check_for_allTrumps(self, move, player):
-        pass
+        turns_made = 4 - self.moves.count(0)
+        if turns_made == 0:
+            return True
+        first_card = self.moves[(4 + self.turn - turns_made) % 4]
+        first_card_suit = first_card.split("_")[1]
+        played_card = move.split("_")
+
+        if player.has_suit(first_card_suit):
+            if played_card[1] != first_card_suit:
+                return False
+        
+        best_card = first_card.split("_")
+        
+        for i in range(0, 4):
+            if self.moves[i] == 0:
+                continue
+            
+            card = self.moves[i].split("_")
+            if card[1] == first_card_suit and self.TrumpsOrder[card[0]] > self.TrumpsOrder[best_card[0]]:
+                best_card[0] = card[0]
+                
+        if player.has_higher(best_card, self.TrumpsOrder):
+            if self.TrumpsOrder[played_card[0]] < self.TrumpsOrder[best_card[0]]:
+                return False
+            
+        return True
 
     def check_for_noTrumps(self, move, player):
         turns_made = 4 - self.moves.count(0)
@@ -178,7 +214,62 @@ class Game:
         return True
 
     def check_for_suit_Trump(self, move, player):
-        pass
+        suit = self.trump
+        turns_made = 4 - self.moves.count(0)
+        if turns_made == 0:
+            return True
+        first_card = self.moves[(4 + self.turn - turns_made) % 4]
+        first_card_suit = first_card.split("_")[1]
+        played_card = move.split("_")
+        
+        if player.has_suit(first_card_suit):
+            if played_card[1] != first_card_suit:
+                return False
+    
+        best_card = first_card.split("_")
+        
+        for i in range(0, 4):
+            if self.moves[i] == 0:
+                continue
+            card = self.moves[i].split("_")
+            if card[1] == suit:
+                if card[1] != best_card[1]:
+                    best_card = card
+                    winn_ind = i
+                elif self.TrumpsOrder[card[0]] > self.TrumpsOrder[best_card[0]]:
+                    best_card = card
+                    winn_ind = i
+            else:
+                if best_card[1] != suit and self.noTrumpsOrder[card[0]] > self.noTrumpsOrder[best_card[0]]:
+                    best_card = card
+                    winn_ind = i
+                    
+        if first_card_suit == suit:
+            if player.has_higher(best_card, self.TrumpsOrder) and self.TrumpsOrder[played_card[0]] < self.TrumpsOrder[best_card[0]]:
+                return False
+            else:
+                return True
+        
+        if played_card[1] == first_card_suit:
+            return True
+        
+        elif best_card[1] != suit and played_card[1] == suit:
+            return True
+        
+        elif best_card[1] == suit and (player.get_id() + winn_ind) % 2 == 0:
+            return True
+        
+        elif best_card[1] != suit and player.has_suit(suit) and card[1] != suit:
+            return False
+        
+        elif not player.has_higher(best_card, self.TrumpsOrder):
+            return True
+        
+        elif self.TrumpsOrder[played_card[0]] > self.TrumpsOrder[best_card[0]]:
+            return True
+            
+        return False
+        
 
     def check_move(self, move, player):
         if self.type == "all_trumps":
@@ -193,10 +284,6 @@ class Game:
     def reset_moves(self): # resets the played action
         self.moves = [0,0,0,0]
 
-    def reset_deck(self):
-        self.deck = card_keys
-        random.shuffle(self.deck)
-
     def get_players_number_of_cards(self):
         return self.players_number_of_cards
     
@@ -205,7 +292,7 @@ class Game:
         for i in range(0, n):
             cards.append(all_cards[self.deck[i]]) 
         return cards
-
+    
     def can_call_game_type(self, game_type):
         if game_type == "pass":
             return True
@@ -224,9 +311,34 @@ class Game:
                 return True
             else:
                 return False
-
+        print(game_type)
         if self.gameTypes[game_type] <= self.gameTypes[self.type]:
             return False
 
         return True
-   
+    
+    def order_cards(self, cards):
+        new_cards = []
+        smallest = None
+        suit = cards_from_suit = 0
+        
+        for i in range(0,8):
+            for card in cards:
+                if card.get_suit() == card_suits[suit]:
+                    cards_from_suit += 1
+                    if smallest == None:
+                        smallest = card
+                    elif call_order[smallest.get_name()] > call_order[card.get_name()]:
+                        smallest = card
+            if cards_from_suit == 0:
+                continue
+                
+            new_cards.append(smallest)
+            cards.remove(smallest)
+            smallest = None
+            
+            if cards_from_suit == 1:
+                suit += 1
+            cards_from_suit = 0
+            
+        return new_cards

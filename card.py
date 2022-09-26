@@ -16,6 +16,9 @@ class Card:
         self.width = self.body_image.get_width()
         self.height = self.body_image.get_height()
 
+    def get_name(self):
+        return self.name
+    
     def get_suit(self):
         return self.suit
 
