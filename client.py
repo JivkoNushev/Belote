@@ -1,11 +1,10 @@
 from operator import truediv
 import pygame
-import pickle
 import ui as ui
 from network import Network
 from player import Player
-from card import Card
-from game import Game
+#from card import Card
+#from game import Game
 
 win = pygame.display.set_mode((ui.win_height, ui.win_width))
 pygame.display.set_caption("Client")
