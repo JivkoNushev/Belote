@@ -21,6 +21,8 @@ class Game:
         self.playing = False
         self.t1_score = 0
         self.t2_score = 0
+        self.t1_points = 0
+        self.t2_points = 0
         self.moves = [0,0,0,0]
         self.players_number_of_cards = [0,0,0,0]
         self.turn = 0
@@ -28,11 +30,12 @@ class Game:
         self.change_type_turn = 0
         self.types_calls = [0,0,0,0]
         self.score_multiplier = 1
-        
+        self.called_by_team = 0
+
         self.type = ""
         self.trump = ""
         self.deal = True
-        self.deck = card_keys
+        self.deck = card_keys.copy()
         random.shuffle(self.deck)
         self.noTrumpsOrder = {"seven" : 0, "eight": 1, "nine" : 2, "jack": 3, "queen": 4, "king": 5, "ten": 6, "ace": 7}
         self.TrumpsOrder = {"seven" : 0, "eight": 1, "queen": 2, "king": 3, "ten": 4, "ace": 5, "nine" : 6, "jack": 7}
@@ -47,6 +50,11 @@ class Game:
     def get_player_move(self, player):
         pass
     
+    def reset_deck(self):
+        self.deck = card_keys.copy()
+        random.shuffle(self.deck)
+        print(self.deck)
+
     def ended(self):
         return self.players_number_of_cards.count(0) == 4
 
@@ -124,7 +132,28 @@ class Game:
                             winn = i
         
         return winn
-                    
+    
+    def update_points(self):
+        if self.turn % 2 == 0:
+            self.t1_score += 10
+        else:
+            self.t2_score += 10
+
+        if self.type == "all_trumps":
+            if ((self.t1_score % 100) % 10) > ((self.t2_score % 100) % 10):
+                self.t1_score += 10
+            else:
+                self.t2_score += 10
+
+            self.t1_points += int((self.t1_score) // 10)
+            self.t2_points += int((self.t2_score) // 10)
+        elif self.type == "no_trumps":
+            self.t1_points += int((self.t1_score * 2) // 10)
+            self.t2_points += int((self.t2_score * 2) // 10)
+        elif self.type == "suit_trump":
+            self.t1_points += int((self.t1_score) // 10)
+            self.t2_points += int((self.t2_score) // 10)
+
     def update_score(self, winner):
         if 0 in self.moves:
             return -1
@@ -309,7 +338,7 @@ class Game:
                 return True
             else:
                 return False
-        print(game_type)
+        #print(game_type)
         if self.gameTypes[game_type] <= self.gameTypes[self.type]:
             return False
 
@@ -329,6 +358,7 @@ class Game:
                     elif call_order[smallest.get_name()] > call_order[card.get_name()]:
                         smallest = card
             if cards_from_suit == 0:
+                suit += 1
                 continue
                 
             new_cards.append(smallest)

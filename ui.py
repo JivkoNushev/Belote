@@ -51,7 +51,7 @@ def redrawWindow(win, game, player, choosing_game_type = False):
 
     played_cards = game.moves
     players_number_of_cards = game.players_number_of_cards
-    team_points = (game.t1_score, game.t2_score)
+    team_points = (game.t1_points, game.t2_points)
     first_player_id = player.get_id()
     player_id = player.get_id()
     player_start_x = (win_width - 8 * 50) // 2 # 50 is half of the width of a card
