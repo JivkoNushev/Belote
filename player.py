@@ -16,37 +16,75 @@ class Player():
     def get_cards(self):
         return self.cards
     
-    def call(self):
+    def call_belote(self, played_card):
+        for card in self.get_cards():
+            if card.get_name() != played_card.name and card.get_suit() == played_card.suit and (card.get_name() == "queen" or card.get_name() == "king"):
+                print("belote!")
+    
+    def call_kare(self):
+        list_t = [0, 0, 0, 0, 0, 0, 0, 0]
+        for card in self.get_cards():
+            list_t[call_order[card.get_name()]] += 1
+        for i in range(2,8):
+            if list_t[i] == 4:
+                if i == 2:
+                    print("150!")
+                if i == 4:
+                    print("200!")
+                if i > 2 and i != 4:
+                    print("100!")
+                
+    def call_sequence(self):
         suit_cards = []
         sum_of_cards = 0
         for i in range(0,4):
-            number = 0
             for card in self.get_cards():
                 if card.get_suit() == card_suits[i]:
-                    sum_of_cards += call_order[card.get_name()]
-                    suit_cards.append(card)
-            if len(suit_cards) == 5 and sum_of_cards % 5 == 0:
-                number = 5
-            elif len(suit_cards) == 4 and (sum_of_cards + 2) % 4 == 0:
-                number = 4
-            elif len(suit_cards) == 3 and sum_of_cards % 3 == 0:
-                number = 3
+                    suit_cards.append(card) 
+            if len(suit_cards) >= 5:
+                for i in range(0, (len(suit_cards) - 4)):
+                    for j in range(i, i + 5):
+                        if int(call_order[suit_cards[i].get_name()] + j) != int(call_order[suit_cards[j].get_name()]):
+                            break
+                        else:
+                            sum_of_cards += call_order[suit_cards[j].get_name()]
+                            if j == i + 4:
+                                if sum_of_cards % 5 == 0:
+                                    print("kvinta!")
+                                else:
+                                    sum_of_cards = 0
             
-            for i in range(0, number):
-                if i == number - 1:
-                    if number == 5:
-                        print("kvinta!")
-                    if number == 4:
-                        print("kvadra!")
-                    if number == 3:
-                        print("terca!")
-                else:
-                    print("i = ", i, "number = ", number, "len = ", len(suit_cards))
-                    if int(call_order[suit_cards[0].get_name()]+i) != int(call_order[suit_cards[i].get_name()]):
-                        break
-            
+            if len(suit_cards) >= 4:
+                for i in range(0, (len(suit_cards) - 3)):
+                    for j in range(i, i + 4):
+                        if int(call_order[suit_cards[i].get_name()] + j) != int(call_order[suit_cards[j].get_name()]):
+                            break
+                        else:
+                            sum_of_cards += call_order[suit_cards[j].get_name()]
+                            if j == i + 3:
+                                if (sum_of_cards + 2) % 4 == 0:
+                                    print("kvadra!")
+                                else:
+                                    sum_of_cards = 0
+                                    
+            if len(suit_cards) >= 3:
+                for i in range(0, (len(suit_cards) - 2)):
+                    for j in range(i, i + 3):
+                        if int(call_order[suit_cards[i].get_name()] + j) != int(call_order[suit_cards[j].get_name()]):
+                            break
+                        else:
+                            sum_of_cards += call_order[suit_cards[j].get_name()]
+                                
+                            if j == i + 2:
+                                if sum_of_cards % 3 == 0:
+                                    print("terca!")
+                                else:
+                                    sum_of_cards = 0 
+           
             sum_of_cards = 0
             suit_cards = []
+            
+        self.call_kare()
     
     def has_suit(self, suit):
         for card in self.get_cards():

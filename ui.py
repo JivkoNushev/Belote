@@ -11,8 +11,8 @@ _settings.change_win_width_height(pygame.display.Info().current_w, pygame.displa
 win_height = _settings.win_height 
 win_width = _settings.win_width
 
-# win_height = 720
-# win_width = 1280
+win_height = 720
+win_width = 1280
 
 class Button:
     def __init__(self, text, x, y, width = 1, height = 1, color = (0,255,0)):
@@ -35,18 +35,26 @@ class Button:
 
     def clicked(self, pos):
         if (self.x <= pos[0] and pos[0] < self.x + self.width) and (self.y <= pos[1] and pos[1] < self.y + self.height):
-            self.color = (0,0,255)
+            #self.color = (0,0,255)
             return True
         return False
 
-buttons = [Button("Enter Game", 0, 1), Button("Clubs", -30, -30, 20, 10), Button("Diamonds", -30, -20, 20, 10), Button("Hearts", -30, -10, 20, 10), Button("Spades", -30, 0, 20, 10), Button("no_trumps", 10, -30, 20, 10),\
-Button("all_trumps", 10, -20, 20, 10), Button("2x", 10, -10, 20, 10), Button("4x", 10, 0, 20, 10), Button("Pass", -30, 20, 20 * 3, 10)]
+buttons = {"main_menu": Button("Enter Game", 0, 1), "clubs": Button("Clubs", -30, -30, 20, 10), "diamonds": Button("Diamonds", -30, -20, 20, 10), "hearts": Button("Hearts", -30, -10, 20, 10), "spades":Button("Spades", -30, 0, 20, 10), "no_trumps": Button("no_trumps", 10, -30, 20, 10),\
+"all_trumps":Button("all_trumps", 10, -20, 20, 10), "2x":Button("2x", 10, -10, 20, 10), "4x":Button("4x", 10, 0, 20, 10), "pass":Button("Pass", -30, 20, 20 * 3, 10)}
 
 def redrawWindow(win, game, player, choosing_game_type = False):
     win.fill((100,255,100))
+    print(game.type)
     
     if choosing_game_type == True:
-        for button in buttons[1:]:
+        for key, button in buttons.items():
+            # if game.type == "" and game.trump == "":
+            #     button.color = (0,255,0)
+            # elif game.type == key or game.trump == key:
+            #     button.color = (0,0,255)
+            # else:
+            #     button.color = (0,255,0)
+            
             button.draw(win)
             wait_text = pygame.font.SysFont(None, int( win_height / 20)).render(button.text, True, (0, 0, 0))
             wait_text_rect = wait_text.get_rect(center=(button.x, button.y))
@@ -66,8 +74,9 @@ def redrawWindow(win, game, player, choosing_game_type = False):
     team_points = (game.t1_points, game.t2_points)
     first_player_id = player.get_id()
     player_id = player.get_id()
-    player_start_x = (win_width - (player.cards[0].width / 2 * (players_number_of_cards[player_id] + 1))) // 2
-    player_start_y = win_height - player.cards[0].height 
+    card_temp = Card(0,0, "back", "", 15,10)
+    player_start_x = (win_width - (card_temp.width / 2 * (players_number_of_cards[player_id] + 1))) // 2
+    player_start_y = win_height - card_temp.height 
 
     count = 0
     #for i in range(0, players_number_of_cards[player_id]):
@@ -158,7 +167,7 @@ def print_main_menu(win):
     wait_text = pygame.font.SysFont(None, 50).render("Main menu", True, (0, 0, 0))
     wait_text_rect = wait_text.get_rect(center=(win_width/2, win_height/2))
     win.blit(wait_text,wait_text_rect)
-    buttons[0].draw(win)
+    buttons["main_menu"].draw(win)
     wait_text = pygame.font.SysFont(None, 50).render("Main menu", True, (0, 0, 0))
     wait_text_rect = wait_text.get_rect(center=(buttons[0].x, buttons[0].y))
     win.blit(wait_text,wait_text_rect)

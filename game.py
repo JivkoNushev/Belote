@@ -321,6 +321,9 @@ class Game:
         return cards
     
     def can_call_game_type(self, game_type):
+        if game_type == "":
+            return False
+        
         if game_type == "pass":
             return True
         if self.type == "":
@@ -347,9 +350,9 @@ class Game:
     def order_cards(self, cards):
         new_cards = []
         smallest = None
-        suit = cards_from_suit = 0
+        suit = cards_from_suit = i = 0
         
-        for i in range(0,8):
+        while i < 8:
             for card in cards:
                 if card.get_suit() == card_suits[suit]:
                     cards_from_suit += 1
@@ -359,14 +362,27 @@ class Game:
                         smallest = card
             if cards_from_suit == 0:
                 suit += 1
-                continue
-                
-            new_cards.append(smallest)
-            cards.remove(smallest)
-            smallest = None
-            
-            if cards_from_suit == 1:
-                suit += 1
-            cards_from_suit = 0
+            else:
+                new_cards.append(smallest)
+                cards.remove(smallest)
+                smallest = None
+                i += 1
+                if cards_from_suit == 1:
+                    suit += 1
+                cards_from_suit = 0
             
         return new_cards
+    
+    def call(self, player, card):
+        if len(player.get_cards()) == 8 and self.type != "no_trumps":
+            player.call_sequence()
+            
+        turns_made = 4 - self.moves.count(0)
+        if turns_made == 0:
+            return True
+        first_card = self.moves[(4 + self.turn - turns_made) % 4]
+        first_card_suit = first_card.split("_")[1]
+
+        if ((self.type == "all_trumps" and (card.suit == first_card_suit or first_card_suit == "")) or card.suit == self.trump) and\
+        (card.name == "queen" or card.name == "king"):
+            player.call_belote(card)

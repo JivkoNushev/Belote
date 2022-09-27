@@ -14,8 +14,9 @@ _settings.change_win_width_height(pygame.display.Info().current_w, pygame.displa
 
 win_height = _settings.win_width 
 win_width = _settings.win_height 
-#win_height = 1280
-#win_width = 720
+
+win_height = 1280
+win_width = 720
 
 win = pygame.display.set_mode((win_height, win_width))
 pygame.display.set_caption("Client")
@@ -107,13 +108,11 @@ def main():
             if game.deal == True and game.deal_turn == player_id and dealt_second == True and dealt_third == False:
                 player.deal(game.deal_num_cards(3))
                 game = n.send("deal3")
-                #player.cards = game.order_cards(player.cards)
+                player.cards = game.order_cards(player.cards)
                 dealt_third = True
                 break
             game = n.send("get")
             ui.print_wait_game(win)
-        
-        player.call()
 
         if game.everyone_played():
             ui.redrawWindow(win, game, player)
@@ -153,6 +152,7 @@ def main():
                         if card.clicked(pos):
                             move = card.name + "_" + card.suit
                             if game.check_move(move, player) == True:
+                                game.call(player, card)
                                 player.get_cards().remove(card)
                                 game = n.send(move)
         ui.redrawWindow(win, game, player)
