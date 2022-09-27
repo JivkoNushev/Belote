@@ -1,5 +1,5 @@
 from cmath import rect
-from turtle import heading, width
+#from turtle import heading, width
 import pygame
 
 card_suits = ["clubs", "diamonds", "hearts", "spades"]
