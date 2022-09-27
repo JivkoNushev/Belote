@@ -3,12 +3,18 @@ import pygame
 import ui as ui
 from network import Network
 from player import Player
+import settings
 #from card import Card
 #from game import Game
 
-win = pygame.display.set_mode((ui.win_height, ui.win_width))
-pygame.display.set_caption("Client")
+win_height = settings.win_height
+win_width = settings.win_width
+print(win_height)
+print(win_width)
 pygame.init()
+win = pygame.display.set_mode((win_height, win_width))
+pygame.display.set_caption("Client")
+
 clientNumber = 0
 
 def main():

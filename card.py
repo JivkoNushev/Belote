@@ -1,20 +1,29 @@
 import pygame
+import settings
+
+win_width = settings.win_width
+win_height = settings.win_height
 
 class Card:
-    def __init__(self, x, y, name, suit, isTrump = 0):
-        self.x = x
-        self.y = y
+    def __init__(self, x, y, name, suit, width = 1, height = 1, isTrump = False):
         self.name = name
         self.suit = suit
+        
+        if width <= 0:
+            width = 1
+        if height <= 0:
+            height = 1
+
+        self.width = win_width / 100 + width * win_width / 100
+        self.height = win_height / 100 + height * win_height / 100
+        
+        self.x = win_width/2 + x * win_width / 100
+        self.y = win_height/2 + y * win_height / 100
+        
         self.isTrump = isTrump
         
-        self.body_image = pygame.image.load("CardSprites/" + name + "_" + suit + ".png")
-        self.body = self.body_image.get_rect()
-        self.body.x = self.x
-        self.body.y = self.y
-
-        self.width = self.body_image.get_width()
-        self.height = self.body_image.get_height()
+        self.body_image = pygame.transform.scale(pygame.image.load("CardSprites/" + name + "_" + suit + ".png"), (self.width, self.height))
+        self.body = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def get_name(self):
         return self.name

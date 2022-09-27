@@ -1,4 +1,4 @@
-FILES = client.py network.py server.py player.py game.py card.py ui.py
+FILES = client.py network.py server.py player.py game.py card.py ui.py settings.py
 
 all:
 	python client.py&

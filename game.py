@@ -13,7 +13,7 @@ for i in range(0, 32):
     card_suit = card_suits[i // 8]
     key = card_name + "_" + card_suit
     card_keys.append(key)
-    all_cards[key] = Card(0,0,card_name, card_suit, False)
+    all_cards[key] = Card(0,0,card_name, card_suit, 15, 10, False)
 
 class Game:
     def __init__(self, id):
