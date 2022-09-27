@@ -104,7 +104,7 @@ def main():
         
         player.call()
         
-        if game.ended():
+        if game.ended() and game.type != "":
             try:
                 game = n.send("get_type")
                 continue

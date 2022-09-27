@@ -48,7 +48,7 @@ class Game:
         pass
     
     def ended(self):
-        pass
+        return self.players_number_of_cards.count(0) == 4
 
     def make_move(self, player, move):
         self.moves[player] = move

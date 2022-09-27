@@ -54,9 +54,7 @@ def threaded_client(conn, player, gameId):
                         if winn != -1:
                             reply.update_score(winn)
                         reply.reset_moves()
-                        #reply.reset_deck()
-                        #reply.playing = False
-                        #reply.players_number_of_cards = [0,0,0,0]
+                        
 
                     elif data == "deal3":
                         for i in range(0,3):
@@ -73,6 +71,10 @@ def threaded_client(conn, player, gameId):
                     elif data == "get_type":
                         reply.type = ""
                         reply.change_type_turn == reply.turn
+                        reply.reset_deck()
+                        reply.playing = False
+                        reply.players_number_of_cards = [0,0,0,0]
+                        reply.reset_moves()
 
                     elif data == "pass": 
                         if reply.types_calls.count("pass") == 3:
