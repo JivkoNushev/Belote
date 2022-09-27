@@ -3,15 +3,20 @@ import pygame
 import ui as ui
 from network import Network
 from player import Player
-import settings
+from settings import _settings
 #from card import Card
 #from game import Game
-
-win_height = settings.win_height
-win_width = settings.win_width
-print(win_height)
-print(win_width)
 pygame.init()
+
+pygame.display.init()
+
+_settings.change_win_width_height(pygame.display.Info().current_w, pygame.display.Info().current_h)
+
+win_height = _settings.win_width 
+win_width = _settings.win_height 
+#win_height = 1280
+#win_width = 720
+
 win = pygame.display.set_mode((win_height, win_width))
 pygame.display.set_caption("Client")
 
