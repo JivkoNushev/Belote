@@ -24,29 +24,18 @@ pygame.display.set_caption("Client")
 
 clientNumber = 0
 
-def main():
+def game(username):
     clock = pygame.time.Clock()
     run = True
-    main_menu_loop = False
-
-    while main_menu_loop:
-        ui.print_main_menu(win)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                if ui.buttons["main_menu"].clicked(pos):
-                    main_menu_loop = False
 
     n = Network()
     player_id = int(n.getPlayer())
-    player = Player(player_id)
+    player = Player(player_id, username)
     dealt_third = False
-
+    if username == "":
+        username = "Unknown"
+    game = n.send("username_" + username)
     while run:
-        win_width, win_height = pygame.display.get_surface().get_size()
         clock.tick(60)
         try:
             game = n.send("get")
@@ -61,7 +50,6 @@ def main():
         dealt_second = False
         
         while not game.playing:
-            win_width, win_height = pygame.display.get_surface().get_size()
             dealt_third = False
 
             game = n.send("get")
@@ -77,7 +65,6 @@ def main():
                 ui.print_wait_game(win)
                 game = n.send("get")
                 continue
-            #print(game.players_number_of_cards)
             ui.redrawWindow(win, game, player, True)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -113,7 +100,6 @@ def main():
                         
 
         while dealt_third == False:
-            win_width, win_height = pygame.display.get_surface().get_size()
             if game.deal == True and game.deal_turn == player_id and dealt_second == True and dealt_third == False:
                 player.deal(game.deal_num_cards(3))
                 game = n.send("deal3")
@@ -166,4 +152,39 @@ def main():
                                 game = n.send(move)
         ui.redrawWindow(win, game, player)
 
+def main():
+    main_menu = True
+    game_menu = False
+
+    username = ''
+    
+  
+    active = False
+
+    while main_menu:
+        ui.print_main_menu(win, active, username)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                if ui.buttons["enter_game"].clicked(pos):
+                    main_menu = False
+                    game_menu = True
+                if ui.input_rect.collidepoint(event.pos):
+                    active = True
+                else:
+                    active = False
+  
+            if event.type == pygame.KEYDOWN:
+    
+                if active == True:
+                    if event.key == pygame.K_BACKSPACE:
+                        username = username[:-1]
+                    else:
+                        username += event.unicode
+        
+    if game_menu == True:
+        game(username)
+    
 main()

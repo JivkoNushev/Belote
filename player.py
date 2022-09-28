@@ -6,9 +6,10 @@ card_suits = ["clubs", "diamonds", "hearts", "spades"]
 call_order = {"seven" : 0, "eight": 1, "nine" : 2, "ten": 3, "jack": 4, "queen": 5, "king": 6, "ace": 7}
 
 class Player():
-    def __init__(self, id):
+    def __init__(self, id, username):
         self.id = id
         self.cards = []
+        self.username= username
 
     def get_id(self):
         return self.id

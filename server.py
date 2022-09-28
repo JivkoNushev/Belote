@@ -4,7 +4,7 @@ from _thread import *
 from game import Game
 from card import Card
 
-server = "192.168.1.127"
+server = "192.168.0.27"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,12 +48,15 @@ def threaded_client(conn, player, gameId):
                     break
                 else:
                     reply = game
-
+                    
                     if data == "reset":
                         winn = reply.eval_winner()
                         if winn != -1:
                             reply.update_score(winn)
                         reply.reset_moves()
+
+                    elif len(data) > 9 and data[0:9] == "username_":
+                        reply.usernames[player] = data[9:]
 
                     elif data == "deal3":
                         for i in range(0,3):
@@ -74,6 +77,7 @@ def threaded_client(conn, player, gameId):
                         reply.reset_deck()
                         reply.playing = False
                         reply.players_number_of_cards = [0,0,0,0]
+                        reply.types_calls = [0,0,0,0]
                         reply.called_by_team = 0
                         reply.reset_moves()
 

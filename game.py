@@ -31,6 +31,7 @@ class Game:
         self.types_calls = [0,0,0,0]
         self.score_multiplier = 1
         self.called_by_team = 0
+        self.usernames = [0,0,0,0]
 
         self.type = ""
         self.trump = ""
@@ -326,6 +327,7 @@ class Game:
         
         if game_type == "pass":
             return True
+            
         if self.type == "":
             if game_type == "2x" or game_type == "4x":
                 return False
@@ -335,15 +337,17 @@ class Game:
             if self.types_calls[(player_id + 2) % 2] == "pass" or self.types_calls[(player_id + 2) % 2] == 0:
                 if self.score_multiplier == 1:
                     return True
+                else:
+                    return False
             else:
                 return False
+
         if game_type == "4x":
-            if self.types_calls[(player_id + 2) % 2] == "pass" or self.types_calls[(player_id + 2) % 2] == 0:
-                if self.score_multiplier == 2:
-                  return True
+            if self.types_calls[(player_id + 2) % 2] != "2x" and self.score_multiplier == 2:
+                return True
             else:
                 return False
-        #print(game_type)
+
         if self.gameTypes[game_type] <= self.gameTypes[self.type]:
             return False
 
