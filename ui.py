@@ -21,6 +21,11 @@ class Button:
         if height <= 0:
             height = 1
 
+        self.width_multiplier = width
+        self.height_multiplier = height
+        self.x_multiplier = x
+        self.y_multiplier = y
+
         self.width = win_width // 100 + width * win_width // 100
         self.height = win_height // 100 + height * win_height // 100
         
@@ -33,6 +38,12 @@ class Button:
     def draw(self, win):
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
 
+    def update(self, win_width, win_height):
+        self.width = win_width // 100 + self.width_multiplier * win_width // 100
+        self.height = win_height // 100 + self.height_multiplier * win_height // 100
+        
+        self.x = win_width//2 + self.x_multiplier * win_width // 100
+        self.y = win_height//2 + self.y_multiplier * win_height // 100
     def clicked(self, pos):
         if (self.x <= pos[0] and pos[0] < self.x + self.width) and (self.y <= pos[1] and pos[1] < self.y + self.height):
             #self.color = (0,0,255)
@@ -43,11 +54,13 @@ buttons = {"main_menu": Button("Enter Game", 0, 1), "clubs": Button("Clubs", -30
 "all_trumps":Button("all_trumps", 10, -20, 20, 10), "2x":Button("2x", 10, -10, 20, 10), "4x":Button("4x", 10, 0, 20, 10), "pass":Button("Pass", -30, 20, 20 * 3, 10)}
 
 def redrawWindow(win, game, player, choosing_game_type = False):
+    win_width, win_height = pygame.display.get_surface().get_size()
     win.fill((100,255,100))
     # print(game.type)
     
     if choosing_game_type == True:
         for key, button in buttons.items():
+            button.update(win_width, win_height)
             if key == "main_menu":
                 continue
 

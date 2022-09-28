@@ -18,7 +18,8 @@ win_width = _settings.win_height / 2
 #win_height = 1280
 #win_width = 720
 
-win = pygame.display.set_mode((win_height, win_width))
+win = pygame.display.set_mode((win_height, win_width), pygame.RESIZABLE)
+surface = pygame.display.get_surface()
 pygame.display.set_caption("Client")
 
 clientNumber = 0
@@ -45,6 +46,7 @@ def main():
     dealt_third = False
 
     while run:
+        win_width, win_height = pygame.display.get_surface().get_size()
         clock.tick(60)
         try:
             game = n.send("get")
@@ -59,6 +61,7 @@ def main():
         dealt_second = False
         
         while not game.playing:
+            win_width, win_height = pygame.display.get_surface().get_size()
             dealt_third = False
 
             game = n.send("get")
@@ -110,6 +113,7 @@ def main():
                         
 
         while dealt_third == False:
+            win_width, win_height = pygame.display.get_surface().get_size()
             if game.deal == True and game.deal_turn == player_id and dealt_second == True and dealt_third == False:
                 player.deal(game.deal_num_cards(3))
                 game = n.send("deal3")

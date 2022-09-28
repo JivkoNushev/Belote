@@ -2,6 +2,7 @@ import pygame
 from settings import _settings
 
 pygame.display.init()
+#win_width, win_height = pygame.display.get_surface().get_size()
 
 _settings.change_win_width_height(pygame.display.Info().current_w, pygame.display.Info().current_h)
 
