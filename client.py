@@ -12,11 +12,11 @@ pygame.display.init()
 
 _settings.change_win_width_height(pygame.display.Info().current_w, pygame.display.Info().current_h)
 
-win_height = _settings.win_width 
-win_width = _settings.win_height 
+win_height = _settings.win_width / 2
+win_width = _settings.win_height / 2
 
-win_height = 1280
-win_width = 720
+#win_height = 1280
+#win_width = 720
 
 win = pygame.display.set_mode((win_height, win_width))
 pygame.display.set_caption("Client")
@@ -36,7 +36,7 @@ def main():
                 pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                if ui.buttons[0].clicked(pos):
+                if ui.buttons["main_menu"].clicked(pos):
                     main_menu_loop = False
 
     n = Network()
@@ -60,6 +60,7 @@ def main():
         
         while not game.playing:
             dealt_third = False
+
             game = n.send("get")
             if game.deal == True and game.deal_turn == player_id and dealt_first == False:
                 player.deal(game.deal_num_cards(3))
@@ -80,29 +81,33 @@ def main():
                     run = False
                     pygame.quit()
                 if game.change_type_turn == player_id:
-                    if event.type == pygame.MOUSEBUTTONDOWN: # can make it so it doesnt detect mouse when not on turn
+                    if event.type == pygame.MOUSEBUTTONDOWN:
                         pos = pygame.mouse.get_pos()
                         game_type = ""
-                        if ui.buttons[9].clicked(pos):
+                        if ui.buttons["pass"].clicked(pos):
                             game_type = "pass"
-                        elif ui.buttons[1].clicked(pos):
+                        elif ui.buttons["clubs"].clicked(pos):
                             game_type = "clubs"
-                        elif ui.buttons[2].clicked(pos):
+                        elif ui.buttons["diamonds"].clicked(pos):
                             game_type = "diamonds"
-                        elif ui.buttons[3].clicked(pos):
+                        elif ui.buttons["hearts"].clicked(pos):
                             game_type = "hearts"
-                        elif ui.buttons[4].clicked(pos):
+                        elif ui.buttons["spades"].clicked(pos):
                             game_type = "spades"
-                        elif ui.buttons[5].clicked(pos):
+                        elif ui.buttons["no_trumps"].clicked(pos):
                             game_type = "no_trumps"
-                        elif ui.buttons[6].clicked(pos):
+                        elif ui.buttons["all_trumps"].clicked(pos):
                             game_type = "all_trumps"
-                        elif ui.buttons[7].clicked(pos):
+                        elif ui.buttons["2x"].clicked(pos):
                             game_type = "2x"
-                        elif ui.buttons[8].clicked(pos):
+                        elif ui.buttons["4x"].clicked(pos):
                             game_type = "4x"
-                        if game.can_call_game_type(game_type):
+
+                        if game.can_call_game_type(game_type, player_id):
+                            print(game_type)
                             game = n.send(game_type)
+                        print(game.types_calls)
+                        
 
         while dealt_third == False:
             if game.deal == True and game.deal_turn == player_id and dealt_second == True and dealt_third == False:

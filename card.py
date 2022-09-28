@@ -5,11 +5,11 @@ pygame.display.init()
 
 _settings.change_win_width_height(pygame.display.Info().current_w, pygame.display.Info().current_h)
 
-win_height = _settings.win_width 
-win_width = _settings.win_height
+win_height = _settings.win_width / 2
+win_width = _settings.win_height / 2
 
-win_height = 1280
-win_width = 720
+#win_height = 1280
+#win_width = 720
 
 class Card:
     def __init__(self, x, y, name, suit, width = 1, height = 1, isTrump = False):

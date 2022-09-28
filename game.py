@@ -320,7 +320,7 @@ class Game:
             cards.append(all_cards[self.deck[i]]) 
         return cards
     
-    def can_call_game_type(self, game_type):
+    def can_call_game_type(self, game_type, player_id):
         if game_type == "":
             return False
         
@@ -332,13 +332,15 @@ class Game:
             return True
         
         if game_type == "2x":
-            if self.score_multiplier == 1:
-                return True
+            if self.types_calls[(player_id + 2) % 2] == "pass" or self.types_calls[(player_id + 2) % 2] == 0:
+                if self.score_multiplier == 1:
+                    return True
             else:
                 return False
         if game_type == "4x":
-            if self.score_multiplier == 2:
-                return True
+            if self.types_calls[(player_id + 2) % 2] == "pass" or self.types_calls[(player_id + 2) % 2] == 0:
+                if self.score_multiplier == 2:
+                  return True
             else:
                 return False
         #print(game_type)

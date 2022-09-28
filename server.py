@@ -4,7 +4,7 @@ from _thread import *
 from game import Game
 from card import Card
 
-server = "192.168.0.27"
+server = "192.168.1.127"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -122,14 +122,12 @@ def threaded_client(conn, player, gameId):
 
                     elif data == "2x":
                         reply.score_multiplier = 2
-                        reply.types_calls = [0,0,0,0]
                         reply.types_calls[player] = data
                         reply.change_type_turn = (reply.change_type_turn + 1)%4
                         reply.called_by_team = player % 2
 
                     elif data == "4x":
                         reply.score_multiplier = 4
-                        reply.types_calls = [0,0,0,0]
                         reply.types_calls[player] = data
                         reply.change_type_turn = (reply.change_type_turn + 1)%4
                         reply.called_by_team = player % 2
