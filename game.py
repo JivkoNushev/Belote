@@ -6,6 +6,8 @@ all_cards = dict()
 card_names = ["seven", "eight", "nine", "jack", "queen", "king", "ten", "ace"]
 card_suits = ["clubs", "diamonds", "hearts", "spades"]
 call_order = {"seven" : 0, "eight": 1, "nine" : 2, "ten": 3, "jack": 4, "queen": 5, "king": 6, "ace": 7}
+call_power = {"T_seven": 0, "k": 1, "K": 2, "C": 3, "no_trumps": 4, "all_trumps": 5}
+
 card_keys = []
 
 for i in range(0, 32):
@@ -32,6 +34,8 @@ class Game:
         self.score_multiplier = 1
         self.called_by_team = 0
         self.usernames = [0,0,0,0]
+        self.player_calls = {0: [],1: [],2: [],3: []}
+        self.made_calls = False
 
         self.type = ""
         self.trump = ""
@@ -135,6 +139,8 @@ class Game:
         return winn
     
     def update_points(self):
+        teams = [0,0]
+
         if self.turn % 2 == 0:
             self.t1_score += 10
         else:
@@ -145,15 +151,35 @@ class Game:
                 self.t1_score += 10
             else:
                 self.t2_score += 10
-
             self.t1_score = self.t1_score // 10
             self.t2_score = self.t2_score // 10
+
         elif self.type == "no_trumps":
             self.t1_score = (self.t1_score * 2) // 10
             self.t2_score = (self.t2_score * 2) // 10
+
         elif self.type == "suit_trump":
             self.t1_score = self.t1_score // 10
             self.t2_score = self.t2_score // 10
+        
+        for i in range(0, 4):
+            for call in self.player_calls[i]:
+                if call[0] == "T":
+                    teams[i % 2] += 20
+                elif call[0] == "k":
+                    teams[i % 2] += 50
+                elif call[0] == "K":
+                    teams[i % 2] += 100
+                elif call == "C_nine":
+                    teams[i % 2] += 150
+                elif call == "C_jack":
+                    teams[i % 2] += 200
+                elif call[0] == "C":
+                    teams[i % 2] += 100
+
+        self.t1_score += teams[0]
+        self.t2_score += teams[1]
+
         if self.called_by_team == 0:
             if self.t2_score > (self.t2_score + self.t1_score) // 2:
                 self.t2_points += self.t2_score + self.t1_score
@@ -289,23 +315,31 @@ class Game:
                 return False
             else:
                 return True
-        
+        print(best_card[0])
+        print(best_card[1])
         if played_card[1] == first_card_suit:
+            print("252")
             return True
         
         elif best_card[1] != suit and played_card[1] == suit:
+            print("256")
             return True
         
         elif best_card[1] == suit and (player.get_id() + winn_ind) % 2 == 0:
+            print("Player id: ", player.get_id(), "Winn ind: ", winn_ind)
             return True
         
         elif best_card[1] != suit and player.has_suit(suit) and card[1] != suit:
             return False
-        
-        elif not player.has_higher(best_card, self.TrumpsOrder):
-            return True
-        
-        elif self.TrumpsOrder[played_card[0]] > self.TrumpsOrder[best_card[0]]:
+        elif played_card[1] == suit:
+            if not player.has_higher(best_card, self.TrumpsOrder):
+                print("267")
+                return True
+
+            elif self.TrumpsOrder[played_card[0]] > self.TrumpsOrder[best_card[0]]:
+                print("271")
+                return True
+        elif not player.has_suit(suit):
             return True
             
         return False
@@ -404,3 +438,34 @@ class Game:
         if ((self.type == "all_trumps" and (card.suit == first_card_suit or first_card_suit == "")) or card.suit == self.trump) and\
         (card.name == "queen" or card.name == "king"):
             player.call_belote(card)
+
+
+    def get_heighest_call(self, team):
+        best_call = ""
+        for call in self.player_calls[team]:
+            if call_power[call] > call_power[best_call]:
+                    best_call = call
+                    
+        for call in self.player_calls[team + 2]:
+            if call_power[call] > call_power[best_call]:
+                    best_call = call
+
+        return best_call
+
+    def change_calls(self):
+        best_call_t1 = self.get_heighest_call(0)
+        best_call_t2 = self.get_heighest_call(1)
+
+        for p in range(0,4):
+            if p % 2 == 0:
+                for i in range(0,len(self.player_calls[p])):
+                    if call_power[best_call_t2] >= call_power[self.player_calls[p][i]]:
+                        self.player_calls[p][i] = 0
+            else:
+                for i in range(0,len(self.player_calls[p])):
+                    if call_power[best_call_t1] >= call_power[self.player_calls[p][i]]:
+                        self.player_calls[p][i] = 0
+
+
+
+

@@ -22,7 +22,7 @@ class Player():
             if card.get_name() != played_card.name and card.get_suit() == played_card.suit and (card.get_name() == "queen" or card.get_name() == "king"):
                 print("belote!")
     
-    def call_kare(self):
+    def call_kare(self, sequences):
         list_t = [0, 0, 0, 0, 0, 0, 0, 0]
         for card in self.get_cards():
             list_t[call_order[card.get_name()]] += 1
@@ -34,9 +34,12 @@ class Player():
                     print("200!")
                 if i > 2 and i != 4:
                     print("100!")
+                keys = call_order.keys()
+                sequences.append("call_C_" + keys[i])
+        return sequences
                 
     def call_sequence(self):
-        suit_cards = []
+        suit_cards = sequences = []
         sum_of_cards = 0
         for i in range(0,4):
             for card in self.get_cards():
@@ -51,6 +54,7 @@ class Player():
                             sum_of_cards += call_order[suit_cards[j].get_name()]
                             if j == i + 4:
                                 if sum_of_cards % 5 == 0:
+                                    sequences.append("call_K_" + call_order[suit_cards[i].get_name()])
                                     print("kvinta!")
                                 else:
                                     sum_of_cards = 0
@@ -64,6 +68,7 @@ class Player():
                             sum_of_cards += call_order[suit_cards[j].get_name()]
                             if j == i + 3:
                                 if (sum_of_cards + 2) % 4 == 0:
+                                    sequences.append("call_k_" + call_order[suit_cards[i].get_name()])
                                     print("kvadra!")
                                 else:
                                     sum_of_cards = 0
@@ -78,6 +83,7 @@ class Player():
                                 
                             if j == i + 2:
                                 if sum_of_cards % 3 == 0:
+                                    sequences.append("call_T_" + call_order[suit_cards[i].get_name()])
                                     print("terca!")
                                 else:
                                     sum_of_cards = 0 
@@ -85,7 +91,7 @@ class Player():
             sum_of_cards = 0
             suit_cards = []
             
-        self.call_kare()
+        self.call_kare(sequences)
     
     def has_suit(self, suit):
         for card in self.get_cards():

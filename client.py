@@ -60,6 +60,7 @@ def game(username):
             elif game.deal == True and game.deal_turn == player_id and dealt_first == True and dealt_second == False:
                 player.deal(game.deal_num_cards(2))
                 game = n.send("deal2")
+                #player.cards = game.order_cards(player.cards)
                 dealt_second = True
             if not dealt_first or not dealt_second or game.players_number_of_cards.count(5) != 4:
                 ui.print_wait_game(win)
@@ -122,6 +123,7 @@ def game(username):
 
         if game.ended() and game.type != "":
             try:
+                
                 game = n.send("get_type")
                 
                 dealt_third = False
@@ -133,7 +135,10 @@ def game(username):
                 break
 
         pygame.display.update()
-
+        if game.players_number_of_cards.count(8) == 0:
+            game = n.send()
+        # if game.call_belote():
+        #     game = n.send("belote")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -147,7 +152,9 @@ def game(username):
                         if card.clicked(pos):
                             move = card.name + "_" + card.suit
                             if game.check_move(move, player) == True:
-                                game.call(player, card)
+                                calls = game.call(player, card)
+                                for call in calls:
+                                    game = n.send(call)
                                 player.get_cards().remove(card)
                                 game = n.send(move)
         ui.redrawWindow(win, game, player)
@@ -157,8 +164,6 @@ def main():
     game_menu = False
 
     username = ''
-    
-  
     active = False
 
     while main_menu:

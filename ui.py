@@ -125,6 +125,12 @@ def redrawWindow(win, game, player, choosing_game_type = False):
     username_text = pygame.font.SysFont(None, int( win_height / 20)).render(game.usernames[first_player_id], True, username_color)
     win.blit(username_text, f_coords)
 
+    if game.players_number_of_cards.count(8) != 0:
+        for call in game.player_calls[0]:
+            f_coords = (player_start_x + username_text.get_rect().width, player_start_y-( win_height / 20))
+            call_text = pygame.font.SysFont(None, int( win_height / 20)).render(call, True, (0,0,0))
+            win.blit(call_text, f_coords)
+
     count += 1
     if game.types_calls[first_player_id] and game.playing == False:
         wait_text = pygame.font.SysFont(None, int( win_height / 20)).render(game.types_calls[first_player_id], True, (0, 0, 0))
@@ -150,6 +156,13 @@ def redrawWindow(win, game, player, choosing_game_type = False):
             username = pygame.transform.rotate(username, 90)
             coords = (player_start_x - ( win_height / 20), player_start_y)
             to_the_side = True
+
+            if game.players_number_of_cards.count(8) != 0:
+                for call in game.player_calls[player_id]:
+                    f_coords = (player_start_x + username.get_rect().width - ( win_height / 20), player_start_y)
+                    call_text = pygame.font.SysFont(None, int( win_height / 20)).render(call, True, (0,0,0))
+                    win.blit(call_text, f_coords)
+
         elif i == 1:
             player_start_x = (win_width - (back_card.width / 2 * (players_number_of_cards[player_id] + 1))) // 2
             player_start_y = 0
@@ -157,6 +170,13 @@ def redrawWindow(win, game, player, choosing_game_type = False):
             username = pygame.transform.rotate(username, 180)
             coords = (player_start_x, back_card.height)
             to_the_side = False
+
+            if game.players_number_of_cards.count(8) != 0:
+                for call in game.player_calls[player_id]:
+                    f_coords = (player_start_x + username.get_rect().width, back_card.height)
+                    call_text = pygame.font.SysFont(None, int( win_height / 20)).render(call, True, (0,0,0))
+                    win.blit(call_text, f_coords)
+
         else:
             player_start_y = (win_height - (back_card.width / 2 * (players_number_of_cards[player_id] + 1))) // 2
             player_start_x = 0
@@ -164,6 +184,14 @@ def redrawWindow(win, game, player, choosing_game_type = False):
             username = pygame.transform.rotate(username, 270)
             coords = (player_start_x + back_card.height, player_start_y)
             to_the_side = True
+
+            if game.players_number_of_cards.count(8) != 0:
+                for call in game.player_calls[player_id]:
+                    f_coords = (player_start_x + username.get_rect().width + back_card.height, player_start_y)
+                    call_text = pygame.font.SysFont(None, int( win_height / 20)).render(call, True, (0,0,0))
+                    win.blit(call_text, f_coords)
+
+
         win.blit(username, coords)
         type_call = game.types_calls[player_id]
         if type_call != 0 and game.playing == False:
@@ -214,13 +242,10 @@ def redrawWindow(win, game, player, choosing_game_type = False):
         elif i == (first_player_id + 2) % 4:
             player_start_x = win_width // 2 - back_card.width
             player_start_y = win_height // 2 - back_card.height
-            back_card.update_body(pygame.transform.rotate(back_card.body_image, 180))
         else:
             player_start_y = win_height // 2 - back_card.width/2
             player_start_x = win_width // 2 - back_card.height
             back_card.update_body(pygame.transform.rotate(back_card.body_image, 270))
-
-        
 
         back_card.update_pos(player_start_x, player_start_y)
         back_card.draw(win)
