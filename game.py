@@ -393,8 +393,8 @@ class Game:
                 return True
             else:
                 return False
-
-        if self.gameTypes[game_type] <= self.gameTypes[self.type]:
+        
+        if self.gameTypes[game_type] <= self.gameTypes[self.trump]:
             return False
 
         return True

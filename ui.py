@@ -80,7 +80,7 @@ def redrawWindow(win, game, player, choosing_game_type = False):
                 button.color = (0,255, 0)
             elif game.type == "suit_trump" and game.gameTypes[key] > game.gameTypes[game.trump]:
                 button.color = (0,255, 0)
-            elif game.type == "" or game.gameTypes[key] > game.gameTypes[game.type]:
+            elif game.type != "suit_trump" and (game.type == "" or game.gameTypes[key] > game.gameTypes[game.type]):
                 button.color = (0,255, 0)
             else:
                 button.color = 	(0,100,0)
