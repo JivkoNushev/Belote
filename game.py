@@ -139,21 +139,33 @@ class Game:
             self.t1_score += 10
         else:
             self.t2_score += 10
-
+        
         if self.type == "all_trumps":
             if ((self.t1_score % 100) % 10) > ((self.t2_score % 100) % 10):
                 self.t1_score += 10
             else:
                 self.t2_score += 10
 
-            self.t1_points += int((self.t1_score) // 10)
-            self.t2_points += int((self.t2_score) // 10)
+            self.t1_score = self.t1_score // 10
+            self.t2_score = self.t2_score // 10
         elif self.type == "no_trumps":
-            self.t1_points += int((self.t1_score * 2) // 10)
-            self.t2_points += int((self.t2_score * 2) // 10)
+            self.t1_score = (self.t1_score * 2) // 10
+            self.t2_score = (self.t2_score * 2) // 10
         elif self.type == "suit_trump":
-            self.t1_points += int((self.t1_score) // 10)
-            self.t2_points += int((self.t2_score) // 10)
+            self.t1_score = self.t1_score // 10
+            self.t2_score = self.t2_score // 10
+        if self.called_by_team == 0:
+            if self.t2_score > (self.t2_score + self.t1_score) // 2:
+                self.t2_points += self.t2_score + self.t1_score
+            else:
+                self.t1_points += self.t1_score
+                self.t2_points += self.t2_score
+        else:
+            if self.t1_score > (self.t2_score + self.t1_score) // 2:
+                self.t1_points += self.t2_score + self.t1_score
+            else:
+                self.t1_points += self.t1_score
+                self.t2_points += self.t2_score
 
     def update_score(self, winner):
         if 0 in self.moves:

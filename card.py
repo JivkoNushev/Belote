@@ -53,4 +53,4 @@ class Card:
         win.blit(self.body_image, self.body)
     
     def clicked(self, pos):
-        return (self.x <= pos[0] and pos[0] <= self.x + self.width - 50) and (self.y <= pos[1] and pos[1] <= self.y + self.height)
+        return (self.x <= pos[0] and pos[0] <= self.x + self.width / 2) and (self.y <= pos[1] and pos[1] <= self.y + self.height)

@@ -79,6 +79,8 @@ def threaded_client(conn, player, gameId):
                         reply.players_number_of_cards = [0,0,0,0]
                         reply.types_calls = [0,0,0,0]
                         reply.called_by_team = 0
+                        reply.t1_score = 0
+                        reply.t2_score = 0
                         reply.reset_moves()
 
                     elif data == "pass": 
