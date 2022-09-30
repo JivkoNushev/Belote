@@ -4,7 +4,7 @@ from _thread import *
 from game import Game
 from card import Card
 
-server = "192.168.1.127"call_belote
+server = "192.168.0.27"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -70,10 +70,8 @@ def threaded_client(conn, player, gameId):
                         reply.deal_turn = (reply.deal_turn + 1) % 4
                         reply.players_number_of_cards[player] += 2
 
-                    elif data == "update_points":
-                        reply.update_points()
-
                     elif data == "get_type":
+                        reply.update_points()
                         reply.type = ""
                         reply.change_type_turn == reply.turn
                         reply.reset_deck()
@@ -85,14 +83,15 @@ def threaded_client(conn, player, gameId):
                         reply.t2_score = 0
                         reply.reset_moves()
                         reply.made_calls = False
+                        reply.player_calls = {0: [],1: [],2: [],3: []}
 
                     elif len(data) > 4 and data[0:5] == "call_":
-                        reply.player_calls[player].append(data[4:])
+                        reply.player_calls[player].append(data[5:])
+                        #print(reply.player_calls[player])
 
                     elif data == "change_calls":
                         if reply.made_calls == False:
-                            reply.change_calls(player)
-                            
+                            reply.change_calls()
 
                     elif data == "belote":
                         if player % 2 == 0:

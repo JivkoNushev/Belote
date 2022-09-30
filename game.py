@@ -149,6 +149,39 @@ class Game:
         else:
             self.t2_score += 10
         
+        for i in range(0, 4):
+            for call in self.player_calls[i]:
+                if call[0] == "T":
+                    teams[i % 2] += 20
+                elif call[0] == "k":
+                    teams[i % 2] += 50
+                elif call[0] == "K":
+                    teams[i % 2] += 100
+                elif call == "C_nine":
+                    teams[i % 2] += 150
+                elif call == "C_jack":
+                    teams[i % 2] += 200
+                elif call[0] == "C":
+                    teams[i % 2] += 100
+        self.t1_score += teams[0]
+        self.t2_score += teams[1]
+
+        if self.t1_score == 0:
+            self.t2_score += 90
+        elif self.t2_score == 0:
+            self.t1_score += 90
+
+        if self.score_multiplier != 1:
+            if self.t1_score > self.t2_score:
+                self.t1_score += self.t2_score
+            elif self.t2_score > self.t1_score:
+                self.t2_score += self.t1_score
+            else:
+                self.t1_score = 0
+                self.t2_score = 0
+            self.t1_score *= self.score_multiplier
+            self.t2_score *= self.score_multiplier
+
         if self.type == "all_trumps":
             if ((self.t1_score % 100) % 10) > ((self.t2_score % 100) % 10):
                 self.t1_score += 10
@@ -165,24 +198,6 @@ class Game:
             self.t1_score = self.t1_score // 10
             self.t2_score = self.t2_score // 10
         
-        for i in range(0, 4):
-            for call in self.player_calls[i]:
-                if call[0] == "T":
-                    teams[i % 2] += 20
-                elif call[0] == "k":
-                    teams[i % 2] += 50
-                elif call[0] == "K":
-                    teams[i % 2] += 100
-                elif call == "C_nine":
-                    teams[i % 2] += 150
-                elif call == "C_jack":
-                    teams[i % 2] += 200
-                elif call[0] == "C":
-                    teams[i % 2] += 100
-
-        self.t1_score += teams[0]
-        self.t2_score += teams[1]
-
         if self.called_by_team == 0:
             if self.t2_score > (self.t2_score + self.t1_score) // 2:
                 self.t2_points += self.t2_score + self.t1_score
@@ -443,22 +458,28 @@ class Game:
             player.call_belote(card)
 
 
-    def get_heighest_call(self, team):
+    def get_highest_call(self, team):
         best_call = ""
         for call in self.player_calls[team]:
-            if call_power[call] > call_power[best_call]:
+            if best_call == "":
+                best_call = call
+            elif call_power[call] > call_power[best_call]:
                     best_call = call
                     
         for call in self.player_calls[team + 2]:
-            if call_power[call] > call_power[best_call]:
+            if best_call == "":
+                best_call = call
+            elif call_power[call] > call_power[best_call]:
                     best_call = call
-
+        print(best_call)
         return best_call
 
     def change_calls(self):
-        best_call_t1 = self.get_heighest_call(0)
-        best_call_t2 = self.get_heighest_call(1)
-
+        self.made_calls = True
+        best_call_t1 = self.get_highest_call(0)
+        best_call_t2 = self.get_highest_call(1)
+        if best_call_t1 == "" or best_call_t2 == "":
+            return
         for p in range(0,4):
             if p % 2 == 0:
                 for i in range(0,len(self.player_calls[p])):
@@ -468,8 +489,7 @@ class Game:
                 for i in range(0,len(self.player_calls[p])):
                     if call_power[best_call_t1] >= call_power[self.player_calls[p][i]]:
                         self.player_calls[p][i] = 0
-
-        self.made_calls = True
+        
 
 
 

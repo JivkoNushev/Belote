@@ -133,8 +133,8 @@ def game(username):
                 print("failed")
                 print("Couldn't get game")
                 break
-
         pygame.display.update()
+
         if game.players_number_of_cards.count(8) == 0 and game.made_calls == False and player_id == game.turn:
             game = n.send("change_calls")
             ui.redrawWindow(win, game, player)
@@ -143,7 +143,7 @@ def game(username):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-                ui.print_close_game()
+                ui.print_close_game(win)
                 pygame.time.delay(2000)
                 pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
