@@ -135,10 +135,11 @@ def game(username):
                 break
 
         pygame.display.update()
-        if game.players_number_of_cards.count(8) == 0:
-            game = n.send()
-        # if game.call_belote():
-        #     game = n.send("belote")
+        if game.players_number_of_cards.count(8) == 0 and game.made_calls == False and player_id == game.turn:
+            game = n.send("change_calls")
+            ui.redrawWindow(win, game, player)
+            pygame.time.delay(1000)
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -152,11 +153,15 @@ def game(username):
                         if card.clicked(pos):
                             move = card.name + "_" + card.suit
                             if game.check_move(move, player) == True:
-                                calls = game.call(player, card)
-                                for call in calls:
-                                    game = n.send(call)
+                                if game.players_number_of_cards[player_id] == 8:
+                                    calls = player.call_sequence()
+                                    for call in calls:
+                                        game = n.send(call)
+                                if player.call_belote(card):
+                                    game = n.send("belote")
                                 player.get_cards().remove(card)
                                 game = n.send(move)
+
         ui.redrawWindow(win, game, player)
 
 def main():

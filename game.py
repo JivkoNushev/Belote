@@ -6,7 +6,10 @@ all_cards = dict()
 card_names = ["seven", "eight", "nine", "jack", "queen", "king", "ten", "ace"]
 card_suits = ["clubs", "diamonds", "hearts", "spades"]
 call_order = {"seven" : 0, "eight": 1, "nine" : 2, "ten": 3, "jack": 4, "queen": 5, "king": 6, "ace": 7}
-call_power = {"T_seven": 0, "k": 1, "K": 2, "C": 3, "no_trumps": 4, "all_trumps": 5}
+call_power = {"T_seven": 0, "T_eight": 1, "T_nine": 2, "T_ten": 3, "T_jack": 4, "T_queen": 5, \
+"k_seven": 6, "k_eight": 7, "k_nine": 8, "k_ten": 9, "k_jack": 10, "k_queen": 11,\
+"K_seven": 12, "K_eight": 13, "K_nine": 14, "K_ten": 15, "K_jack": 16, "K_queen": 17,\
+"C_seven": 18, "C_eight": 19, "C_nine": 20, "C_ten": 21, "C_jack": 22, "C_queen": 23}
 
 card_keys = []
 
@@ -466,6 +469,7 @@ class Game:
                     if call_power[best_call_t1] >= call_power[self.player_calls[p][i]]:
                         self.player_calls[p][i] = 0
 
+        self.made_calls = True
 
 
 
