@@ -84,6 +84,8 @@ def threaded_client(conn, player, gameId):
                         reply.reset_moves()
                         reply.made_calls = False
                         reply.player_calls = {0: [],1: [],2: [],3: []}
+                        reply.belote = [0,0,0,0]
+
 
                     elif len(data) > 4 and data[0:5] == "call_":
                         reply.player_calls[player].append(data[5:])
@@ -98,6 +100,10 @@ def threaded_client(conn, player, gameId):
                             reply.t1_score += 20
                         else:
                             reply.t2_score += 20
+                        reply.Belote[player] = True
+
+                    elif data == "clear_belote":
+                        reply.Belote[player] = False
 
                     elif data == "pass": 
                         if reply.types_calls.count("pass") == 3:

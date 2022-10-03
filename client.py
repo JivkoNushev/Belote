@@ -159,6 +159,8 @@ def game(username):
                                         game = n.send(call)
                                 if player.call_belote(card, game):
                                     game = n.send("belote")
+                                else:
+                                    game = n.send("clear_belote")
                                 player.get_cards().remove(card)
                                 game = n.send(move)
 

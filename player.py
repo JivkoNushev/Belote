@@ -20,12 +20,13 @@ class Player():
     def call_belote(self, played_card, game):
         turns_made = 4 - game.moves.count(0)
         first_card = game.moves[(4 + game.turn - turns_made) % 4]
+        first_card_suit = 0
         if first_card != 0:
             first_card_suit = first_card.split("_")[1]
 
         for card in self.get_cards():
             if card.get_name() != played_card.name and card.get_suit() == played_card.suit and (card.get_name() == "queen" or card.get_name() == "king") and (played_card.name == "queen" or played_card.name == "king"):
-                if first_card != 0 and played_card.suit == first_card_suit:
+                if first_card == 0 or played_card.suit == first_card_suit:
                     print("belote!")
                     return True
 

@@ -56,7 +56,6 @@ buttons = {"enter_game": Button("Enter Game", 0, 0,20, 10), "clubs": Button("Clu
 def redrawWindow(win, game, player, choosing_game_type = False):
     win_width, win_height = pygame.display.get_surface().get_size()
     win.fill((100,255,100))
-    # print(game.type)
     
     if choosing_game_type == True:
         for key, button in buttons.items():
@@ -137,6 +136,11 @@ def redrawWindow(win, game, player, choosing_game_type = False):
         wait_text_rect = pygame.Rect(player_start_x + count * card_temp.width / 2, player_start_y, card_temp.width, card_temp.height)
         win.blit(wait_text,wait_text_rect)
 
+    if game.Belote[first_player_id]:
+        belote_text = pygame.font.SysFont(None, int( win_height / 20)).render("belote", True, (0, 0, 0))
+        belote_text_rect = pygame.Rect(player_start_x + count * card_temp.width / 2, player_start_y - int( win_height / 20), card_temp.width, card_temp.height)
+        win.blit(belote_text,belote_text_rect)
+
     to_the_side = False
     for i in range(0, 3):
         back_card = Card(0,0,"back", "", 15, 10)
@@ -157,6 +161,11 @@ def redrawWindow(win, game, player, choosing_game_type = False):
             coords = (player_start_x - ( win_height / 20), player_start_y)
             to_the_side = True
 
+            if game.Belote[player_id]:
+                belote_text = pygame.font.SysFont(None, int( win_height / 20)).render("Belote", True, (0, 0, 0))
+                f_coords = (player_start_x - username.get_rect().width - ( win_height / 20), player_start_y + ( win_height / 20))
+                win.blit(belote_text,f_coords)
+
             if game.players_number_of_cards.count(8) != 0 or game.players_number_of_cards.count(7) == 4:
                 for call in game.player_calls[player_id]:
                     f_coords = (player_start_x - username.get_rect().width - ( win_height / 20), player_start_y)
@@ -165,10 +174,16 @@ def redrawWindow(win, game, player, choosing_game_type = False):
 
         elif i == 1:
             player_start_x = (win_width - (back_card.width / 2 * (players_number_of_cards[player_id] + 1))) // 2
-            player_start_y = 0
-            username = pygame.transform.rotate(username, 180)
+            player_start_y = 0  
+            username = pygame.transform.rotate(username, 0)
             coords = (player_start_x, back_card.height)
             to_the_side = False
+
+
+            if game.Belote[player_id]:
+                belote_text = pygame.font.SysFont(None, int( win_height / 20)).render("Belote", True, (0, 0, 0))
+                f_coords = (player_start_x + username.get_rect().width, back_card.height + int( win_height / 20))
+                win.blit(belote_text, f_coords)
 
             if game.players_number_of_cards.count(8) != 0 or game.players_number_of_cards.count(7) == 4:
                 for call in game.player_calls[player_id]:
@@ -184,9 +199,14 @@ def redrawWindow(win, game, player, choosing_game_type = False):
             coords = (player_start_x + back_card.height, player_start_y)
             to_the_side = True
 
+            if game.Belote[player_id]:
+                belote_text = pygame.font.SysFont(None, int( win_height / 20)).render("Belote", True, (0, 0, 0))
+                f_coords = (player_start_x + username.get_rect().width + back_card.height + int( win_height / 20), player_start_y)
+                win.blit(belote_text, f_coords)
+
             if game.players_number_of_cards.count(8) != 0 or game.players_number_of_cards.count(7) == 4:
                 for call in game.player_calls[player_id]:
-                    f_coords = (player_start_x + username.get_rect().width + back_card.height, player_start_y)
+                    f_coords = (player_start_x + username.get_rect().width + back_card.height, player_start_y + ( win_height / 20))
                     call_text = pygame.font.SysFont(None, int( win_height / 20)).render(call, True, (0,0,0))
                     win.blit(call_text, f_coords)
 

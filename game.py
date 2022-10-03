@@ -38,6 +38,7 @@ class Game:
         self.called_by_team = 0
         self.usernames = [0,0,0,0]
         self.player_calls = {0: [],1: [],2: [],3: []}
+        self.Belote = [False, False, False, False]
         self.made_calls = False
 
         self.type = ""
