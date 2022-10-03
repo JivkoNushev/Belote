@@ -157,7 +157,7 @@ def game(username):
                                     calls = player.call_sequence()
                                     for call in calls:
                                         game = n.send(call)
-                                if player.call_belote(card):
+                                if player.call_belote(card, game):
                                     game = n.send("belote")
                                 player.get_cards().remove(card)
                                 game = n.send(move)
