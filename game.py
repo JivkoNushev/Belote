@@ -445,6 +445,9 @@ class Game:
         return new_cards
     
     def call(self, player, card):
+        if self.type == "no_trumps":
+            return
+        
         if len(player.get_cards()) == 8 and self.type != "no_trumps":
             player.call_sequence()
             
